@@ -4,9 +4,12 @@
 
 button:not(:disabled),
 [role="button"]:not([aria-disabled="true"]),
+[role="tab"]:not([aria-disabled="true"]),
+[role="menuitem"]:not([aria-disabled="true"]),
+[tabindex]:not([tabindex="-1"]):not([aria-disabled="true"]),
 a[href],
 summary,
-label[for],
+label,
 select,
 input[type="button"],
 input[type="checkbox"],
@@ -18,8 +21,23 @@ input[type="submit"] {
 }
 
 button:disabled,
-[aria-disabled="true"] {
+[aria-disabled="true"],
+input:disabled,
+select:disabled,
+textarea:disabled {
   cursor: not-allowed;
+}
+
+input[type="email"],
+input[type="number"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="text"],
+input[type="time"],
+input[type="url"],
+textarea {
+  cursor: text;
 }
 
 html,

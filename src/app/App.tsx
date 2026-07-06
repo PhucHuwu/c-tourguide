@@ -2,9 +2,9 @@ import { BrowserRouter, Link, Navigate, Route, Routes, useNavigate, useParams } 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { AIAssistantPage } from "./pages/AIAssistantPage";
-import { AdminDashboard } from "./pages/AdminDashboard";
 import { MapPage } from "./pages/MapPage";
 import { SourcingPage } from "./pages/SourcingPage";
+import { PaymentPage } from "./pages/PaymentPage";
 import { PublicLayout } from "./components/layout/PublicLayout";
 import { LoginPage, RegisterPage } from "./pages/AuthPages";
 import { getSession, roleHomePath } from "./lib/auth";
@@ -14,6 +14,7 @@ import {
   GuideEarningsPage,
   GuideMessagesPage,
   GuideOverviewPage,
+  GuidePremiumPage,
   GuideProfileManagePage,
   GuideVerificationPage,
 } from "./pages/GuidePages";
@@ -179,6 +180,7 @@ function HomePage() {
             <div className="mt-6 grid gap-3 sm:grid-cols-3">{[["Bạch Mã", "thời trang"], ["Sha He", "giá sỉ"], ["Huaqiangbei", "linh kiện"]].map(([name, sub]) => <div key={name} className="rounded-2xl bg-white/12 p-4 backdrop-blur"><div className="font-black">{name}</div><div className="text-sm text-white/70">{sub}</div></div>)}</div>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link to="/markets" className="rounded-xl bg-white px-5 py-3 font-bold text-[#b7131a]">Khám phá chợ</Link>
+              <Link to="/sourcing" className="rounded-xl bg-white/15 px-5 py-3 font-bold text-white">Dịch vụ đánh hàng</Link>
               <Link to="/guides?service=sourcing" className="rounded-xl border border-white/50 px-5 py-3 font-bold text-white">Tìm guide đánh hàng</Link>
             </div>
           </div>
@@ -493,8 +495,9 @@ function BookingStatusPage() {
 function MessagesPage() {
   const [messages, setMessages] = useState<Message[]>(() => getMessages());
   const [text, setText] = useState("");
-  function send(kind: "text" | "location" = "text") {
-    const value = kind === "location" ? "Mình đã chia sẻ vị trí hiện tại." : text.trim();
+  const [callActive, setCallActive] = useState(false);
+  function send(kind: "text" | "location" | "image" = "text") {
+    const value = kind === "location" ? "Mình đã chia sẻ vị trí hiện tại: Guangzhou Railway Station, cổng B." : kind === "image" ? "Mình đã gửi ảnh thực đơn/biển báo để guide kiểm tra giúp." : text.trim();
     if (!value) return;
     const next: Message[] = [...messages, { id: String(Date.now()), author: "traveler", text: value, translation: "我已收到您的信息。", time: "Bây giờ", kind }];
     setMessages(next);
@@ -509,11 +512,11 @@ function MessagesPage() {
   return (
     <PageShell>
       <main className="mx-auto grid max-w-7xl items-start gap-6 px-4 py-8 md:grid-cols-[280px_1fr] md:px-8">
-        <aside className="rounded-3xl bg-[#f8f3f2] p-5"><h1 className="text-2xl font-bold">Tin nhắn</h1><button className="mt-5 w-full rounded-2xl bg-white p-4 text-left shadow-sm"><b>Phạm Khánh Linh</b><p className="mt-1 text-sm text-[#5b5f61]">Guide Quảng Châu · trực tuyến</p></button><button className="mt-3 w-full rounded-2xl bg-white p-4 text-left shadow-sm"><b>Hỗ trợ C-TourGuide</b><p className="mt-1 text-sm text-[#5b5f61]">Luôn sẵn sàng hỗ trợ</p></button></aside>
+        <aside className="rounded-3xl bg-[#f8f3f2] p-5"><h1 className="text-2xl font-bold">Tin nhắn</h1><button className="mt-5 w-full rounded-2xl bg-white p-4 text-left shadow-sm"><b>Phạm Khánh Linh</b><p className="mt-1 text-sm text-[#5b5f61]">Guide Quảng Châu · trực tuyến</p></button><button className="mt-3 w-full rounded-2xl bg-white p-4 text-left shadow-sm"><b>Hỗ trợ C-TourGuide</b><p className="mt-1 text-sm text-[#5b5f61]">Luôn sẵn sàng hỗ trợ</p></button>{callActive && <div className="mt-4 rounded-2xl bg-[#e7f7ed] p-4 text-sm font-bold text-[#087443]">Đang gọi thoại với guide... <button onClick={() => setCallActive(false)} className="ml-2 underline">Kết thúc</button></div>}</aside>
         <section className="flex min-h-0 flex-col overflow-hidden rounded-3xl border border-[#ece2e0] bg-white" style={{ height: "clamp(520px, calc(100vh - 220px), 760px)" }}>
-          <div className="border-b border-[#ece2e0] p-5"><h2 className="font-bold">Chat song ngữ Việt - Trung</h2><p className="text-sm text-[#5b5f61]">Tự động dịch đang bật để guide và khách trao đổi thuận tiện hơn.</p></div>
-          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5">{messages.map((message) => <div key={message.id} className={`flex ${message.author === "traveler" ? "justify-end" : "justify-start"}`}><div className={`max-w-[78%] rounded-2xl px-4 py-3 ${message.author === "traveler" ? "bg-[#b7131a] text-white" : message.author === "system" ? "bg-[#f8f3f2]" : "bg-[#f2f2f4]"}`}><p>{message.text}</p>{message.translation && <p className="mt-2 text-sm opacity-75">{message.translation}</p>}{message.kind === "location" && <div className="mt-3 rounded-xl bg-white/20 p-3 text-sm">Vị trí đã chia sẻ · mở trong bản đồ</div>}<span className="mt-2 block text-xs opacity-70">{message.time}</span></div></div>)}</div>
-          <div className="border-t border-[#ece2e0] p-4"><div className="flex gap-2"><button onClick={() => send("location")} className="rounded-xl border border-[#e2e2e5] px-4 font-bold text-[#5b403d]">Vị trí</button><input value={text} onChange={(event) => setText(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") send(); }} placeholder="Nhập tin nhắn..." className="flex-1 rounded-xl border border-[#e2e2e5] px-4 py-3 outline-none focus:border-[#b7131a]" /><button onClick={() => send()} className="rounded-xl bg-[#b7131a] px-5 font-bold text-white">Gửi</button></div></div>
+          <div className="border-b border-[#ece2e0] p-5"><div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"><div><h2 className="font-bold">Chat song ngữ Việt - Trung</h2><p className="text-sm text-[#5b5f61]">Nhắn tin, gọi thoại, gửi ảnh, chia sẻ vị trí và dịch nhanh.</p></div><button onClick={() => setCallActive(true)} className="w-fit rounded-xl bg-[#1a1c1e] px-4 py-2 text-sm font-bold text-white">Gọi thoại</button></div></div>
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5">{messages.map((message) => <div key={message.id} className={`flex ${message.author === "traveler" ? "justify-end" : "justify-start"}`}><div className={`max-w-[78%] rounded-2xl px-4 py-3 ${message.author === "traveler" ? "bg-[#b7131a] text-white" : message.author === "system" ? "bg-[#f8f3f2]" : "bg-[#f2f2f4]"}`}><p>{message.text}</p>{message.translation && <p className="mt-2 text-sm opacity-75">{message.translation}</p>}{message.kind === "location" && <a href="/map" className="mt-3 block rounded-xl bg-white/20 p-3 text-sm underline">Vị trí đã chia sẻ · mở trong bản đồ</a>}{message.kind === "image" && <div className="mt-3 rounded-xl bg-white/20 p-3 text-sm">Ảnh đã gửi · guide có thể xem và dịch nội dung</div>}<span className="mt-2 block text-xs opacity-70">{message.time}</span></div></div>)}</div>
+          <div className="border-t border-[#ece2e0] p-4"><div className="flex flex-col gap-2 md:flex-row"><div className="flex gap-2"><button onClick={() => send("location")} className="rounded-xl border border-[#e2e2e5] px-4 py-3 font-bold text-[#5b403d]">Vị trí</button><button onClick={() => send("image")} className="rounded-xl border border-[#e2e2e5] px-4 py-3 font-bold text-[#5b403d]">Ảnh</button></div><input value={text} onChange={(event) => setText(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") send(); }} placeholder="Nhập tin nhắn..." className="min-w-0 flex-1 rounded-xl border border-[#e2e2e5] px-4 py-3 outline-none focus:border-[#b7131a]" /><button onClick={() => send()} className="rounded-xl bg-[#b7131a] px-5 py-3 font-bold text-white">Gửi</button></div></div>
         </section>
       </main>
     </PageShell>
@@ -524,7 +527,7 @@ function MarketsPage() {
   return (
     <PageShell>
       <main className="mx-auto max-w-7xl px-4 py-8 md:px-8">
-        <div className="rounded-3xl bg-[#b7131a] p-8 text-white md:p-10"><Badge>Đánh hàng Trung Quốc</Badge><h1 className="mt-4 text-4xl font-bold tracking-[-0.05em]">Tìm đúng chợ, đúng guide, đúng nguồn hàng</h1><p className="mt-4 max-w-3xl leading-7 text-white/85">Danh sách chợ đầu mối được thiết kế cho dân buôn Việt: ngành hàng, giờ mở cửa, lưu ý mặc cả, cảnh báo rủi ro và guide phù hợp.</p></div>
+        <div className="rounded-3xl bg-[#b7131a] p-8 text-white md:p-10"><Badge>Đánh hàng Trung Quốc</Badge><h1 className="mt-4 text-4xl font-bold tracking-[-0.05em]">Tìm đúng chợ, đúng guide, đúng nguồn hàng</h1><p className="mt-4 max-w-3xl leading-7 text-white/85">Danh sách chợ đầu mối được thiết kế cho dân buôn Việt: ngành hàng, giờ mở cửa, lưu ý mặc cả, cảnh báo rủi ro và guide phù hợp.</p><Link to="/sourcing" className="mt-5 inline-block rounded-xl bg-white px-5 py-3 font-bold text-[#b7131a]">Xem dịch vụ đánh hàng trọn gói</Link></div>
         <div className="mt-8 grid gap-5 md:grid-cols-3">{markets.map((market) => <Link key={market.id} to={`/markets/${market.id}`} className="overflow-hidden rounded-2xl border border-[#ece2e0] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"><img src={market.image} alt={market.name} className="h-44 w-full object-cover" /><div className="p-5"><Badge tone="blue">{market.category}</Badge><h2 className="mt-3 text-xl font-bold">{market.name}</h2><p className="mt-2 text-sm text-[#5b5f61]">{market.city} · {market.hours}</p><p className="mt-3 text-sm leading-6 text-[#5b403d]">{market.suitableFor}</p></div></Link>)}</div>
       </main>
     </PageShell>
@@ -632,7 +635,11 @@ function GuideRegisterPage() {
 }
 
 function SafetyPage() {
-  return <PageShell><main className="mx-auto max-w-5xl px-4 py-10 md:px-8"><h1 className="text-4xl font-bold tracking-[-0.05em]">An toàn và hỗ trợ</h1><div className="mt-6 grid gap-4 md:grid-cols-3">{["Xác minh hai chiều", "Chia sẻ vị trí chuyến đi", "SOS và hỗ trợ khẩn cấp"].map((item) => <div key={item} className="rounded-2xl bg-[#f8f3f2] p-6"><h2 className="font-bold">{item}</h2><p className="mt-2 text-sm leading-6 text-[#5b403d]">C-TourGuide ưu tiên xác minh danh tính, theo dõi hành trình và hỗ trợ kịp thời khi khách cần trợ giúp.</p></div>)}</div></main></PageShell>;
+  const [sos, setSos] = useState(false);
+  const [shared, setShared] = useState(false);
+  const [reported, setReported] = useState(false);
+  const [rating, setRating] = useState(0);
+  return <PageShell><main className="mx-auto max-w-7xl px-4 py-10 md:px-8"><section className="rounded-3xl bg-[#1a1c1e] p-8 text-white md:p-10"><Badge>An toàn chuyến đi</Badge><h1 className="mt-4 text-4xl font-black tracking-[-0.05em] md:text-6xl">Xác minh, chia sẻ vị trí, SOS và báo cáo rủi ro</h1><p className="mt-4 max-w-3xl leading-8 text-white/75">Bộ công cụ giúp khách Việt an tâm hơn khi đi Trung Quốc tự túc, công tác hoặc đánh hàng.</p></section><div className="mt-8 grid gap-6 lg:grid-cols-[1fr_380px]"><section className="grid gap-4 md:grid-cols-2"><button onClick={() => setShared(true)} className="rounded-3xl bg-[#f8f3f2] p-6 text-left"><h2 className="text-xl font-bold">Chia sẻ vị trí chuyến đi</h2><p className="mt-2 text-sm leading-6 text-[#5b403d]">Tạo link hành trình gửi cho người thân, gồm guide, điểm hẹn và trạng thái booking.</p><span className="mt-4 inline-block font-bold text-[#b7131a]">{shared ? "Đã tạo link chia sẻ" : "Tạo link chia sẻ"}</span></button><button onClick={() => setSos(true)} className="rounded-3xl bg-[#fff1ef] p-6 text-left"><h2 className="text-xl font-bold text-[#b7131a]">Nút SOS khẩn cấp</h2><p className="mt-2 text-sm leading-6 text-[#5b403d]">Gửi cảnh báo tới hỗ trợ C-TourGuide, guide đang đi cùng và liên hệ khẩn cấp.</p><span className="mt-4 inline-block font-bold text-[#b7131a]">Kích hoạt SOS</span></button><button onClick={() => setReported(true)} className="rounded-3xl bg-white p-6 text-left shadow-sm ring-1 ring-[#ece2e0]"><h2 className="text-xl font-bold">Báo cáo hành vi vi phạm</h2><p className="mt-2 text-sm leading-6 text-[#5b403d]">Báo cáo guide, đối tác, cửa hàng hoặc tình huống lừa đảo để admin xử lý.</p><span className="mt-4 inline-block font-bold text-[#b7131a]">{reported ? "Đã gửi báo cáo" : "Gửi báo cáo"}</span></button><div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-[#ece2e0]"><h2 className="text-xl font-bold">Đánh giá sau chuyến đi</h2><p className="mt-2 text-sm text-[#5b403d]">Chấm điểm guide và để lại nhận xét.</p><div className="mt-4 flex gap-2">{[1,2,3,4,5].map((star) => <button key={star} onClick={() => setRating(star)} className={`text-3xl ${rating >= star ? "text-[#b7131a]" : "text-[#d8c2bf]"}`}>★</button>)}</div>{rating > 0 && <p className="mt-3 font-bold text-[#087443]">Đã ghi nhận {rating} sao</p>}</div></section><aside className="space-y-4"><div className="rounded-3xl bg-[#e7f7ed] p-6"><h2 className="text-xl font-bold text-[#087443]">Trạng thái</h2><div className="mt-4 space-y-3 text-sm text-[#204c34]"><p>Vị trí: {shared ? "Đang chia sẻ với người thân" : "Chưa chia sẻ"}</p><p>SOS: {sos ? "Đã kích hoạt, đội hỗ trợ đang tiếp nhận" : "Sẵn sàng"}</p><p>Báo cáo: {reported ? "Admin đã nhận phản ánh" : "Chưa có báo cáo mới"}</p></div></div><div className="rounded-3xl border border-[#ece2e0] bg-white p-6"><h2 className="text-xl font-bold">Hotline hỗ trợ</h2><p className="mt-3 text-sm leading-6 text-[#5b403d]">Hỗ trợ tiếng Việt 24/7 cho các tình huống: lạc đường, mất liên lạc guide, tranh chấp dịch vụ, vấn đề thanh toán hoặc cần phiên dịch khẩn cấp.</p></div></aside></div></main></PageShell>;
 }
 
 function UserProfilePage() {
@@ -656,8 +663,16 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/guides" element={<GuideSearchPage />} />
         <Route path="/search" element={<GuideSearchPage />} />
+        <Route path="/guide/dashboard" element={<GuideOverviewPage />} />
+        <Route path="/guide/bookings" element={<GuideBookingsPage />} />
+        <Route path="/guide/calendar" element={<GuideCalendarPage />} />
+        <Route path="/guide/profile" element={<GuideProfileManagePage />} />
+        <Route path="/guide/verification" element={<GuideVerificationPage />} />
+        <Route path="/guide/earnings" element={<GuideEarningsPage />} />
+        <Route path="/guide/messages" element={<GuideMessagesPage />} />
+        <Route path="/guide/premium" element={<GuidePremiumPage />} />
+        <Route path="/guide" element={<Navigate to="/guide/dashboard" replace />} />
         <Route path="/guides/:id" element={<GuideProfilePage />} />
-        <Route path="/guide" element={<GuideProfilePage />} />
         <Route path="/booking/new/:guideId" element={<NewBookingPage />} />
         <Route path="/booking/:id" element={<BookingStatusPage />} />
         <Route path="/messages" element={<MessagesPage />} />
@@ -666,6 +681,7 @@ export default function App() {
         <Route path="/handbook" element={<HandbookPage />} />
         <Route path="/handbook/:id" element={<HandbookDetailPage />} />
         <Route path="/map" element={<MapPage />} />
+        <Route path="/payments" element={<PaymentPage />} />
         <Route path="/ai" element={<AIAssistantPage />} />
         <Route path="/sourcing" element={<SourcingPage />} />
         <Route path="/guide-register" element={<GuideRegisterPage />} />
@@ -680,13 +696,6 @@ export default function App() {
         <Route path="/partner/orders" element={<PartnerOrdersPage />} />
         <Route path="/partner/profile" element={<PartnerProfilePage />} />
         <Route path="/partner/messages" element={<PartnerMessagesPage />} />
-        <Route path="/guide/dashboard" element={<GuideOverviewPage />} />
-        <Route path="/guide/bookings" element={<GuideBookingsPage />} />
-        <Route path="/guide/calendar" element={<GuideCalendarPage />} />
-        <Route path="/guide/profile" element={<GuideProfileManagePage />} />
-        <Route path="/guide/verification" element={<GuideVerificationPage />} />
-        <Route path="/guide/earnings" element={<GuideEarningsPage />} />
-        <Route path="/guide/messages" element={<GuideMessagesPage />} />
         <Route path="/dashboard" element={<Navigate to="/guide/dashboard" replace />} />
         <Route path="/admin" element={<AdminOverviewPage />} />
         <Route path="/admin/users" element={<AdminUsersPage />} />

@@ -9,8 +9,12 @@ export function PublicFooter() {
           <p className="mt-1 text-sm text-[#5b5f61]">Nền tảng hỗ trợ người Việt đi Trung Quốc an toàn và thuận tiện hơn.</p>
         </div>
         <div className="flex flex-wrap gap-4 text-sm text-[#5b5f61]">
+          <Link to="/sourcing">Dịch vụ đánh hàng</Link>
+          <Link to="/payments">Thanh toán</Link>
+          <Link to="/workspace">Khu vực tài khoản</Link>
           <Link to="/safety">An toàn</Link>
           <Link to="/guide-register">Dành cho guide</Link>
+          <Link to="/partner/dashboard">Đối tác</Link>
           <Link to="/admin">Quản trị</Link>
           <Link to="/revenue">Doanh thu</Link>
         </div>

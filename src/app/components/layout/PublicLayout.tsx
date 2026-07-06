@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { AiQuickChat } from "./AiQuickChat";
 import { PublicFooter } from "./PublicFooter";
 import { PublicHeader } from "./PublicHeader";
 import { PublicNavbar } from "./PublicNavbar";
@@ -12,6 +13,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
       </div>
       <div className="flex-1">{children}</div>
       <PublicFooter />
+      <AiQuickChat />
     </div>
   );
 }

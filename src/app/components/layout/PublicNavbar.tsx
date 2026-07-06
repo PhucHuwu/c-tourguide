@@ -8,7 +8,7 @@ const publicNavItems = [
   { to: "/markets", label: "Đánh hàng" },
   { to: "/handbook", label: "Cẩm nang" },
   { to: "/map", label: "Bản đồ" },
-  { to: "/ai", label: "Trợ lý AI" },
+  { to: "/payments", label: "Thanh toán" },
 ];
 
 const roleNavItems: Record<AccountRole, { to: string; label: string }[]> = {

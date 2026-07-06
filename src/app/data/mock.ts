@@ -55,7 +55,7 @@ export type Message = {
   text: string;
   translation?: string;
   time: string;
-  kind?: "text" | "location";
+  kind?: "text" | "location" | "image";
 };
 
 export const assets = {

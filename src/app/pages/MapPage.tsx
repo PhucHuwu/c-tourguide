@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import marketImage from "@/assets/generated/map/market.png";
 import { PublicLayout } from "../components/layout/PublicLayout";
 
-type PlaceType = "market" | "metro" | "atm" | "hospital" | "restroom";
+type PlaceType = "market" | "metro" | "atm" | "hospital" | "restroom" | "airport" | "attraction" | "restaurant";
 
 type Place = {
   id: string;
@@ -61,6 +61,10 @@ const places: Place[] = [
     note: "Lưu số hộ chiếu, bảo hiểm và liên hệ khẩn cấp trước khi đi.",
     mapQuery: "Yuexiu Hospital Guangzhou China",
   },
+  { id: "baiyun-airport", name: "Sân bay Bạch Vân", type: "airport", district: "Baiyun, Quảng Châu", image: marketImage, metro: "Airport South/North, Line 3", hours: "24/7", note: "Nên lưu terminal và cửa ra trước khi đặt xe hoặc hẹn guide.", mapQuery: "Guangzhou Baiyun International Airport" },
+  { id: "canton-tower", name: "Canton Tower", type: "attraction", district: "Haizhu, Quảng Châu", image: marketImage, metro: "Ga Canton Tower, Line 3/APM", hours: "09:30 - 22:30", note: "Đi buổi chiều tối đẹp hơn, nên mua vé trước vào mùa cao điểm.", mapQuery: "Canton Tower Guangzhou" },
+  { id: "restroom-baima", name: "Nhà vệ sinh gần Bạch Mã", type: "restroom", district: "Yuexiu, Quảng Châu", image: marketImage, metro: "Trong khu thương mại gần cổng chính", hours: "Theo giờ chợ", note: "Nên hỏi bảo vệ hoặc guide vì lối vào có thể thay đổi theo tầng.", mapQuery: "Baima Market Guangzhou restroom" },
+  { id: "viet-restaurant", name: "Nhà hàng Việt tại Quảng Châu", type: "restaurant", district: "Yuexiu, Quảng Châu", image: marketImage, metro: "Khu Beijing Road / Yuexiu", hours: "10:00 - 22:00", note: "Phù hợp khách cần bữa ăn dễ ăn sau khi đi chợ hoặc công tác.", mapQuery: "Vietnamese restaurant Guangzhou Yuexiu" },
 ];
 
 const filters: { id: PlaceType | "all"; label: string }[] = [
@@ -70,6 +74,9 @@ const filters: { id: PlaceType | "all"; label: string }[] = [
   { id: "atm", label: "ATM" },
   { id: "hospital", label: "Bệnh viện" },
   { id: "restroom", label: "Nhà vệ sinh" },
+  { id: "airport", label: "Sân bay" },
+  { id: "attraction", label: "Tham quan" },
+  { id: "restaurant", label: "Nhà hàng Việt" },
 ];
 
 export function MapPage() {
@@ -77,6 +84,7 @@ export function MapPage() {
   const [filter, setFilter] = useState<PlaceType | "all">("all");
   const [selectedTransit, setSelectedTransit] = useState<"metro" | "taxi" | "walk">("metro");
   const [offlineDownloaded, setOfflineDownloaded] = useState(false);
+  const [mapMode, setMapMode] = useState<"google" | "china">("google");
   const filteredPlaces = useMemo(() => {
     return places.filter((place) => {
       const matchesFilter = filter === "all" || place.type === filter;
@@ -130,18 +138,11 @@ export function MapPage() {
         </aside>
 
         <section className="relative min-h-[560px] overflow-hidden rounded-3xl border border-[#ece2e0] bg-[#e8e8ec] shadow-sm">
-          <iframe
-            key={selectedPlace.id}
-            title={`Google Maps - ${selectedPlace.name}`}
-            src={mapSrc}
-            className="h-full min-h-[560px] w-full border-0"
-            loading="lazy"
-            allowFullScreen
-            referrerPolicy="no-referrer-when-downgrade"
-          />
+          {mapMode === "google" ? <iframe key={selectedPlace.id} title={`Google Maps - ${selectedPlace.name}`} src={mapSrc} className="h-full min-h-[560px] w-full border-0" loading="lazy" allowFullScreen referrerPolicy="no-referrer-when-downgrade" /> : <div className="flex h-full min-h-[560px] flex-col justify-between bg-[#dfeff2] p-6"><div><div className="rounded-3xl bg-white/90 p-5 shadow-xl"><h2 className="text-2xl font-bold">Bản đồ nội địa Trung Quốc</h2><p className="mt-2 text-sm text-[#5b5f61]">Chế độ mô phỏng Baidu/Amap: ưu tiên tên địa điểm tiếng Trung, ga metro, chợ đầu mối và chỉ dẫn taxi.</p></div></div><div className="mx-auto rounded-full bg-[#b7131a] px-5 py-3 font-bold text-white shadow-xl">{selectedPlace.name}</div><div className="grid gap-3 md:grid-cols-3">{["Metro gần nhất", "Gọi taxi", "Lưu offline"].map((item) => <div key={item} className="rounded-2xl bg-white/90 p-4 font-bold text-[#006578] shadow">{item}</div>)}</div></div>}
           <div className="absolute left-5 top-5 rounded-2xl bg-white/95 p-4 shadow-lg">
             <div className="text-sm font-bold">{selectedPlace.name}</div>
             <div className="mt-1 text-xs text-[#5b5f61]">Đang xem trên Google Maps.</div>
+            <div className="mt-3 flex gap-2"><button onClick={() => setMapMode("google")} className={`rounded-lg px-3 py-2 text-xs font-bold ${mapMode === "google" ? "bg-[#b7131a] text-white" : "bg-[#f2f2f4]"}`}>Google</button><button onClick={() => setMapMode("china")} className={`rounded-lg px-3 py-2 text-xs font-bold ${mapMode === "china" ? "bg-[#006578] text-white" : "bg-[#f2f2f4]"}`}>Nội địa</button></div>
             <a href={directionsSrc} target="_blank" rel="noreferrer" className="mt-3 inline-block rounded-xl bg-[#b7131a] px-4 py-2 text-xs font-bold text-white">
               Mở chỉ đường
             </a>

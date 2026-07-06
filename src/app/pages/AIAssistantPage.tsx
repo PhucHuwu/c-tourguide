@@ -138,6 +138,12 @@ export function AIAssistantPage() {
   const [isThinking, setIsThinking] = useState(false);
   const [error, setError] = useState("");
 
+  function scanImage(file?: File) {
+    if (!isLoggedIn || !file) return;
+    const userMessage: AiMessage = { id: `u-img-${Date.now()}`, role: "user", text: `Đã tải ảnh: ${file.name}` };
+    setMessages((current) => [...current, userMessage, { id: `a-img-${Date.now()}`, role: "assistant", text: "Kết quả quét ảnh: phát hiện nội dung tiếng Trung có khả năng là thực đơn/biển báo. Dịch nhanh: 请问多少钱 = Xin hỏi giá bao nhiêu; 出口 = Lối ra; 辣 = cay. Nếu đây là thực đơn, hãy chú ý các mức cay 微辣/中辣/特辣 và hỏi trước thành phần nếu dị ứng." }]);
+  }
+
   async function submit(value = input) {
     if (!isLoggedIn) return;
     const prompt = value.trim();
@@ -230,8 +236,8 @@ export function AIAssistantPage() {
           <div className="border-t border-[#ece2e0] p-4">
             <div className="flex flex-col gap-3 md:flex-row">
               <div className="flex gap-2">
-                <button disabled={!isLoggedIn} className="rounded-xl border border-[#e2e2e5] px-4 py-3 font-bold text-[#5b403d] disabled:opacity-60">Ảnh</button>
-                <button disabled={!isLoggedIn} className="rounded-xl border border-[#e2e2e5] px-4 py-3 font-bold text-[#5b403d] disabled:opacity-60">Voice</button>
+                <label className={`rounded-xl border border-[#e2e2e5] px-4 py-3 font-bold text-[#5b403d] ${!isLoggedIn ? "opacity-60" : ""}`}>Ảnh<input disabled={!isLoggedIn} type="file" accept="image/*" className="hidden" onChange={(event) => scanImage(event.target.files?.[0])} /></label>
+                <button disabled={!isLoggedIn} onClick={() => setMessages((current) => [...current, { id: `u-voice-${Date.now()}`, role: "user", text: "Đã ghi âm câu hỏi bằng giọng nói." }, { id: `a-voice-${Date.now()}`, role: "assistant", text: "Tôi đã nhận giọng nói và chuyển thành văn bản. Bạn có thể hỏi về metro, đặt xe, mặc cả hoặc dịch câu tiếng Trung cần dùng." }])} className="rounded-xl border border-[#e2e2e5] px-4 py-3 font-bold text-[#5b403d] disabled:opacity-60">Voice</button>
               </div>
               <input
                 value={input}
