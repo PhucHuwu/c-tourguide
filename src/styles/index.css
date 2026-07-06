@@ -1,3 +1,23 @@
 @import './fonts.css';
 @import './tailwind.css';
 @import './theme.css';
+
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+a[href],
+summary,
+label[for],
+select,
+input[type="button"],
+input[type="checkbox"],
+input[type="file"],
+input[type="radio"],
+input[type="reset"],
+input[type="submit"] {
+  cursor: pointer;
+}
+
+button:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}

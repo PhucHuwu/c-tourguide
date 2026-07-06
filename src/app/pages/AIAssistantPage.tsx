@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import { PublicLayout } from "../components/layout/PublicLayout";
+import { getSession } from "../lib/auth";
 
 type AiMessage = {
   id: string;
@@ -15,24 +17,9 @@ const suggestions = [
   "Gợi ý lịch trình 1 ngày ở Quảng Châu",
 ];
 
-function answerFor(prompt: string) {
-  const normalized = prompt.toLowerCase();
-  if (normalized.includes("bạch mã") || normalized.includes("chợ")) {
-    return "Nếu đi chợ Bạch Mã lần đầu, bạn nên đi từ 8:30-11:30, chuẩn bị ảnh mẫu sản phẩm, hỏi rõ MOQ, giá theo số lượng và điều kiện đổi trả. Nếu không giỏi tiếng Trung, nên đi cùng guide biết mặc cả để tránh đặt cọc khi chưa kiểm mẫu.";
-  }
-  if (normalized.includes("lừa đảo") || normalized.includes("cảnh báo")) {
-    return "Các rủi ro phổ biến: báo giá thấp nhưng đổi chất lượng khi giao, yêu cầu đặt cọc cao, không cho kiểm hàng, phí vận chuyển phát sinh và nhầm địa chỉ kho. Luôn chụp lại bill, WeChat cửa hàng, vị trí quầy và xác nhận điều kiện đổi trả.";
-  }
-  if (normalized.includes("thực đơn") || normalized.includes("biển báo") || normalized.includes("dịch")) {
-    return "Bạn có thể tải ảnh thực đơn hoặc biển báo lên. C-TourGuide sẽ hỗ trợ nhận diện nội dung chính, dịch sang tiếng Việt, giải thích mức cay, giá, nguyên liệu và gợi ý câu nên hỏi bằng tiếng Trung.";
-  }
-  if (normalized.includes("lịch trình")) {
-    return "Lịch trình gợi ý: sáng đi chợ Bạch Mã, trưa ăn gần ga Guangzhou Railway, chiều qua Sha He để khảo giá, tối tổng hợp mẫu và gửi kho. Nên đặt guide tối thiểu nửa ngày nếu đây là lần đầu đi.";
-  }
-  return "Mình có thể hỗ trợ dịch Việt - Trung, gợi ý lịch trình, giải thích cách đi metro, cảnh báo rủi ro và chuẩn bị checklist trước khi đi Trung Quốc.";
-}
-
 export function AIAssistantPage() {
+  const [session] = useState(() => getSession());
+  const isLoggedIn = Boolean(session);
   const [messages, setMessages] = useState<AiMessage[]>([
     {
       id: "welcome",
@@ -42,18 +29,41 @@ export function AIAssistantPage() {
   ]);
   const [input, setInput] = useState("");
   const [isThinking, setIsThinking] = useState(false);
+  const [error, setError] = useState("");
 
-  function submit(value = input) {
+  async function submit(value = input) {
+    if (!isLoggedIn) return;
     const prompt = value.trim();
-    if (!prompt) return;
+    if (!prompt || isThinking) return;
     const userMessage: AiMessage = { id: `u-${Date.now()}`, role: "user", text: prompt };
-    setMessages((current) => [...current, userMessage]);
+    const nextMessages = [...messages, userMessage];
+    setMessages(nextMessages);
     setInput("");
     setIsThinking(true);
-    window.setTimeout(() => {
-      setMessages((current) => [...current, { id: `a-${Date.now()}`, role: "assistant", text: answerFor(prompt) }]);
+    setError("");
+
+    try {
+      const response = await fetch("/api/ai/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: nextMessages.map((message) => ({
+            role: message.role,
+            content: message.text,
+          })),
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.error || "Không thể kết nối AI");
+      setMessages((current) => [...current, { id: `a-${Date.now()}`, role: "assistant", text: data.text || "Tôi chưa có câu trả lời phù hợp." }]);
+    } catch (requestError) {
+      const message = requestError instanceof Error ? requestError.message : "Không thể kết nối AI";
+      setError(message);
+      setMessages((current) => [...current, { id: `a-${Date.now()}`, role: "assistant", text: `Tôi chưa thể trả lời lúc này: ${message}. Vui lòng kiểm tra cấu hình AI hoặc thử lại sau.` }]);
+    } finally {
       setIsThinking(false);
-    }, 500);
+    }
   }
 
   return (
@@ -64,7 +74,7 @@ export function AIAssistantPage() {
           <p className="mt-2 text-sm leading-6 text-[#5b5f61]">Trợ lý thông minh cho các tình huống người Việt thường gặp khi đi Trung Quốc.</p>
           <div className="mt-5 flex flex-col gap-2">
             {suggestions.map((item) => (
-              <button key={item} onClick={() => submit(item)} className="rounded-xl bg-white px-4 py-3 text-left text-sm font-semibold shadow-sm hover:bg-[#fff1ef]">
+              <button key={item} disabled={!isLoggedIn} onClick={() => submit(item)} className="rounded-xl bg-white px-4 py-3 text-left text-sm font-semibold shadow-sm hover:bg-[#fff1ef] disabled:opacity-60">
                 {item}
               </button>
             ))}
@@ -75,9 +85,24 @@ export function AIAssistantPage() {
         </aside>
 
         <section className="flex min-h-0 flex-col overflow-hidden rounded-3xl border border-[#ece2e0] bg-white shadow-sm" style={{ height: "clamp(560px, calc(100vh - 220px), 760px)" }}>
+          {!isLoggedIn && (
+            <div className="border-b border-[#f0d8d5] bg-[#fff8f7] p-5">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-[#b7131a]">Đăng nhập để sử dụng trợ lý AI</h2>
+                  <p className="mt-2 text-sm leading-6 text-[#5b403d]">Trợ lý AI cần tài khoản để lưu hội thoại, cá nhân hóa gợi ý theo hành trình và hỗ trợ các chức năng dịch ảnh, giọng nói.</p>
+                </div>
+                <div className="flex shrink-0 flex-wrap gap-2">
+                  <Link to="/login" className="rounded-xl bg-[#b7131a] px-5 py-3 font-bold text-white">Đăng nhập</Link>
+                  <Link to="/register" className="rounded-xl border border-[#b7131a] px-5 py-3 font-bold text-[#b7131a]">Tạo tài khoản</Link>
+                </div>
+              </div>
+            </div>
+          )}
           <div className="border-b border-[#ece2e0] p-5">
             <h2 className="text-xl font-bold">Hội thoại</h2>
             <p className="mt-1 text-sm text-[#5b5f61]">Hỗ trợ câu hỏi văn bản, hình ảnh, camera và giọng nói trong hành trình.</p>
+            {error && <p className="mt-2 rounded-xl bg-[#fff1ef] px-3 py-2 text-sm font-semibold text-[#b7131a]">{error}</p>}
           </div>
           <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5">
             {messages.map((message) => (
@@ -92,8 +117,8 @@ export function AIAssistantPage() {
           <div className="border-t border-[#ece2e0] p-4">
             <div className="flex flex-col gap-3 md:flex-row">
               <div className="flex gap-2">
-                <button className="rounded-xl border border-[#e2e2e5] px-4 py-3 font-bold text-[#5b403d]">Ảnh</button>
-                <button className="rounded-xl border border-[#e2e2e5] px-4 py-3 font-bold text-[#5b403d]">Voice</button>
+                <button disabled={!isLoggedIn} className="rounded-xl border border-[#e2e2e5] px-4 py-3 font-bold text-[#5b403d] disabled:opacity-60">Ảnh</button>
+                <button disabled={!isLoggedIn} className="rounded-xl border border-[#e2e2e5] px-4 py-3 font-bold text-[#5b403d] disabled:opacity-60">Voice</button>
               </div>
               <input
                 value={input}
@@ -101,10 +126,11 @@ export function AIAssistantPage() {
                 onKeyDown={(event) => {
                   if (event.key === "Enter") submit();
                 }}
-                placeholder="Hỏi về dịch thuật, metro, chợ đầu mối..."
-                className="flex-1 rounded-xl border border-[#e2e2e5] px-4 py-3 outline-none focus:border-[#b7131a]"
+                disabled={!isLoggedIn || isThinking}
+                placeholder={isLoggedIn ? "Hỏi về dịch thuật, metro, chợ đầu mối..." : "Đăng nhập để đặt câu hỏi cho trợ lý AI"}
+                className="flex-1 rounded-xl border border-[#e2e2e5] px-4 py-3 outline-none focus:border-[#b7131a] disabled:bg-[#f8f3f2] disabled:text-[#8a7773]"
               />
-              <button onClick={() => submit()} className="rounded-xl bg-[#b7131a] px-6 py-3 font-bold text-white">Gửi</button>
+              {isLoggedIn ? <button onClick={() => submit()} disabled={isThinking} className="rounded-xl bg-[#b7131a] px-6 py-3 font-bold text-white disabled:opacity-60">{isThinking ? "Đang gửi" : "Gửi"}</button> : <Link to="/login" className="rounded-xl bg-[#b7131a] px-6 py-3 text-center font-bold text-white">Đăng nhập</Link>}
             </div>
           </div>
         </section>

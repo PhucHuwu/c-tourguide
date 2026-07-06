@@ -19,7 +19,7 @@ export const roleLabels: Record<AccountRole, string> = {
 export const roleHomePath: Record<AccountRole, string> = {
   traveler: "/profile",
   guide: "/guide/dashboard",
-  merchant: "/partner-onboarding",
+  merchant: "/partner/dashboard",
   admin: "/admin",
 };
 

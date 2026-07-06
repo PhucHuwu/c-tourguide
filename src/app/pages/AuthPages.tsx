@@ -97,7 +97,7 @@ export function RegisterPage() {
     event.preventDefault();
     window.localStorage.setItem("ctourguide.registration", JSON.stringify({ accountType, submittedAt: new Date().toISOString() }));
     if (accountType === "guide") navigate("/guide-register");
-    else if (accountType === "merchant") navigate("/partner-onboarding");
+    else if (accountType === "merchant") navigate("/partner/profile");
     else navigate("/guides");
   }
 

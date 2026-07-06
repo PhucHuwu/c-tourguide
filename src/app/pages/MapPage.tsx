@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import mapPlaceholder from "@/assets/generated/map/map-placeholder.png";
 import marketImage from "@/assets/generated/map/market.png";
 import { PublicLayout } from "../components/layout/PublicLayout";
 
@@ -14,6 +13,7 @@ type Place = {
   metro: string;
   hours: string;
   note: string;
+  mapQuery: string;
 };
 
 const places: Place[] = [
@@ -26,6 +26,7 @@ const places: Place[] = [
     metro: "Ga Guangzhou Railway Station, Line 2/5",
     hours: "08:00 - 18:00",
     note: "Phù hợp tìm nguồn quần áo trung - cao cấp, nên đi cùng guide nếu lần đầu mặc cả.",
+    mapQuery: "Baima Clothing Wholesale Market Guangzhou China",
   },
   {
     id: "shahe",
@@ -36,6 +37,7 @@ const places: Place[] = [
     metro: "Ga Shaheding, Line 6",
     hours: "06:00 - 15:00",
     note: "Nguồn hàng giá tốt, đông vào buổi sáng, cần kiểm hàng kỹ trước khi gửi kho.",
+    mapQuery: "Shahe Clothing Wholesale Market Guangzhou China",
   },
   {
     id: "atm-railway",
@@ -46,6 +48,7 @@ const places: Place[] = [
     metro: "Cổng B ga Guangzhou Railway Station",
     hours: "24/7",
     note: "Nên kiểm tra phí rút tiền quốc tế trước khi sử dụng.",
+    mapQuery: "Guangzhou Railway Station ATM China",
   },
   {
     id: "hospital-yuexiu",
@@ -56,6 +59,7 @@ const places: Place[] = [
     metro: "Line 2, cách chợ Bạch Mã khoảng 12 phút taxi",
     hours: "24/7",
     note: "Lưu số hộ chiếu, bảo hiểm và liên hệ khẩn cấp trước khi đi.",
+    mapQuery: "Yuexiu Hospital Guangzhou China",
   },
 ];
 
@@ -82,6 +86,8 @@ export function MapPage() {
   }, [filter, query]);
   const [selectedId, setSelectedId] = useState(places[0].id);
   const selectedPlace = places.find((place) => place.id === selectedId) || filteredPlaces[0] || places[0];
+  const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(selectedPlace.mapQuery)}&output=embed`;
+  const directionsSrc = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(selectedPlace.mapQuery)}&travelmode=${selectedTransit === "metro" ? "transit" : selectedTransit === "taxi" ? "driving" : "walking"}`;
 
   return (
     <PublicLayout>
@@ -124,13 +130,21 @@ export function MapPage() {
         </aside>
 
         <section className="relative min-h-[560px] overflow-hidden rounded-3xl border border-[#ece2e0] bg-[#e8e8ec] shadow-sm">
-          <img src={mapPlaceholder} alt="Bản đồ Quảng Châu" className="h-full min-h-[560px] w-full object-cover" />
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full rounded-full bg-[#b7131a] px-4 py-3 font-bold text-white shadow-xl">
-            {selectedPlace.name}
-          </div>
+          <iframe
+            key={selectedPlace.id}
+            title={`Google Maps - ${selectedPlace.name}`}
+            src={mapSrc}
+            className="h-full min-h-[560px] w-full border-0"
+            loading="lazy"
+            allowFullScreen
+            referrerPolicy="no-referrer-when-downgrade"
+          />
           <div className="absolute left-5 top-5 rounded-2xl bg-white/95 p-4 shadow-lg">
-            <div className="text-sm font-bold">Dịch Trung - Việt đang bật</div>
-            <div className="mt-1 text-xs text-[#5b5f61]">Tên địa điểm và ghi chú đã được Việt hóa.</div>
+            <div className="text-sm font-bold">{selectedPlace.name}</div>
+            <div className="mt-1 text-xs text-[#5b5f61]">Đang xem trên Google Maps.</div>
+            <a href={directionsSrc} target="_blank" rel="noreferrer" className="mt-3 inline-block rounded-xl bg-[#b7131a] px-4 py-2 text-xs font-bold text-white">
+              Mở chỉ đường
+            </a>
           </div>
         </section>
 
@@ -161,6 +175,9 @@ export function MapPage() {
               {selectedTransit === "taxi" && "Gợi ý: dùng địa chỉ tiếng Trung từ guide, xác nhận cổng vào trước khi xuống xe."}
               {selectedTransit === "walk" && "Gợi ý: chỉ nên đi bộ nếu bạn đang ở khu chợ lân cận và không mang kiện hàng lớn."}
             </div>
+            <a href={directionsSrc} target="_blank" rel="noreferrer" className="mt-3 block rounded-xl bg-[#b7131a] px-4 py-3 text-center font-bold text-white">
+              Mở Google Maps
+            </a>
           </div>
         </aside>
       </main>

@@ -20,18 +20,9 @@ const roleNavItems: Record<AccountRole, { to: string; label: string }[]> = {
     { to: "/guide/dashboard", label: "Khu vực guide" },
   ],
   merchant: [
-    { to: "/partner-onboarding", label: "Hồ sơ đối tác" },
-    { to: "/partner/leads", label: "Nguồn khách" },
+    { to: "/partner/dashboard", label: "Khu vực đối tác" },
   ],
-  admin: [
-    { to: "/admin", label: "Tổng quan admin" },
-    { to: "/admin/users", label: "Người dùng" },
-    { to: "/admin/guides", label: "Guide" },
-    { to: "/admin/bookings", label: "Booking" },
-    { to: "/admin/reports", label: "Báo cáo" },
-    { to: "/admin/partners", label: "Đối tác" },
-    { to: "/revenue", label: "Doanh thu" },
-  ],
+  admin: [],
 };
 
 export function PublicNavbar() {

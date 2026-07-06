@@ -1,17 +1,31 @@
-import { BrowserRouter, Link, Route, Routes, useNavigate, useParams } from "react-router";
+import { BrowserRouter, Link, Navigate, Route, Routes, useNavigate, useParams } from "react-router";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { AIAssistantPage } from "./pages/AIAssistantPage";
 import { AdminDashboard } from "./pages/AdminDashboard";
-import { GuideDashboard } from "./pages/GuideDashboard";
 import { MapPage } from "./pages/MapPage";
-import { RevenueDashboard } from "./pages/RevenueDashboard";
 import { SourcingPage } from "./pages/SourcingPage";
 import { PublicLayout } from "./components/layout/PublicLayout";
-import { LoginPage, PartnerOnboardingPage, RegisterPage } from "./pages/AuthPages";
+import { LoginPage, RegisterPage } from "./pages/AuthPages";
 import { getSession, roleHomePath } from "./lib/auth";
-import { GuideBookingsPage, GuideCalendarPage, GuideProfileManagePage, GuideVerificationPage } from "./pages/GuidePages";
-import { AdminBookingsPage, AdminGuidesPage, AdminPartnersPage, AdminReportsPage, AdminUsersPage } from "./pages/AdminPages";
+import {
+  GuideBookingsPage,
+  GuideCalendarPage,
+  GuideEarningsPage,
+  GuideMessagesPage,
+  GuideOverviewPage,
+  GuideProfileManagePage,
+  GuideVerificationPage,
+} from "./pages/GuidePages";
+import { AdminBookingsPage, AdminGuidesPage, AdminOverviewPage, AdminPartnersPage, AdminReportsPage, AdminRevenuePage, AdminUsersPage } from "./pages/AdminPages";
+import {
+  PartnerLeadsPage,
+  PartnerMessagesPage,
+  PartnerOrdersPage,
+  PartnerOverviewPage,
+  PartnerProfilePage,
+  PartnerServicesPage,
+} from "./pages/PartnerPages";
 import {
   assets,
   durationLabels,
@@ -401,7 +415,92 @@ function MarketDetailPage() {
 }
 
 function HandbookPage() {
-  return <PageShell><main className="mx-auto max-w-7xl px-4 py-8 md:px-8"><h1 className="text-4xl font-bold tracking-[-0.05em]">Cẩm nang du lịch và đánh hàng</h1><p className="mt-3 max-w-3xl text-[#5b5f61]">Thông tin thực tế cho khách Việt: di chuyển, thanh toán, chợ đầu mối, ăn uống và cảnh báo rủi ro.</p><div className="mt-8 grid gap-5 md:grid-cols-3">{handbookArticles.map((article) => <article key={article.id} className="overflow-hidden rounded-2xl border border-[#ece2e0] bg-white"><img src={article.image} alt={article.title} className="h-44 w-full object-cover" /><div className="p-5"><Badge tone="red">{article.city}</Badge><h2 className="mt-3 text-xl font-bold">{article.title}</h2><p className="mt-2 text-sm leading-6 text-[#5b403d]">{article.summary}</p></div></article>)}</div></main></PageShell>;
+  const [query, setQuery] = useState("");
+  const [topic, setTopic] = useState("Tất cả");
+  const [savedIds, setSavedIds] = useState<string[]>([]);
+  const topics = ["Tất cả", ...Array.from(new Set(handbookArticles.map((article) => article.topic)))];
+  const filteredArticles = handbookArticles.filter((article) => {
+    const matchesTopic = topic === "Tất cả" || article.topic === topic;
+    const matchesQuery = `${article.title} ${article.summary} ${article.city} ${article.topic}`.toLowerCase().includes(query.toLowerCase());
+    return matchesTopic && matchesQuery;
+  });
+  function toggleSaved(id: string) {
+    setSavedIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
+  }
+  return (
+    <PageShell>
+      <main className="mx-auto max-w-7xl px-4 py-8 md:px-8">
+        <section className="rounded-3xl bg-[#b7131a] p-8 text-white md:p-10">
+          <Badge>Cẩm nang C-TourGuide</Badge>
+          <h1 className="mt-4 text-4xl font-bold tracking-[-0.05em]">Cẩm nang du lịch và đánh hàng</h1>
+          <p className="mt-3 max-w-3xl leading-7 text-white/85">Thông tin thực tế cho khách Việt: di chuyển, thanh toán, chợ đầu mối, ăn uống, cảnh báo rủi ro và checklist chuẩn bị trước chuyến đi.</p>
+          <div className="mt-6 grid gap-3 md:grid-cols-[1fr_220px]">
+            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Tìm metro, thanh toán, Bạch Mã, Thành Đô..." className="rounded-xl border border-white/20 bg-white px-4 py-3 text-[#1a1c1e] outline-none focus:border-white" />
+            <div className="rounded-xl bg-white/15 px-4 py-3 font-bold">Đã lưu: {savedIds.length} bài</div>
+          </div>
+        </section>
+        <div className="mt-6 flex flex-wrap gap-2">
+          {topics.map((item) => <button key={item} onClick={() => setTopic(item)} className={`rounded-full px-4 py-2 text-sm font-bold ${topic === item ? "bg-[#b7131a] text-white" : "bg-[#f8f3f2] text-[#5b403d]"}`}>{item}</button>)}
+        </div>
+        <div className="mt-8 grid gap-5 md:grid-cols-3">
+          {filteredArticles.map((article) => (
+            <article key={article.id} className="overflow-hidden rounded-2xl border border-[#ece2e0] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+              <Link to={`/handbook/${article.id}`}><img src={article.image} alt={article.title} className="h-44 w-full object-cover" /></Link>
+              <div className="p-5">
+                <div className="flex items-center justify-between gap-3"><Badge tone="red">{article.topic}</Badge><button onClick={() => toggleSaved(article.id)} className={`rounded-full px-3 py-1 text-xs font-bold ${savedIds.includes(article.id) ? "bg-[#b7131a] text-white" : "bg-[#f8f3f2] text-[#5b403d]"}`}>{savedIds.includes(article.id) ? "Đã lưu" : "Lưu"}</button></div>
+                <Link to={`/handbook/${article.id}`}><h2 className="mt-3 text-xl font-bold hover:text-[#b7131a]">{article.title}</h2></Link>
+                <p className="mt-1 text-sm text-[#5b5f61]">{article.city}</p>
+                <p className="mt-3 text-sm leading-6 text-[#5b403d]">{article.summary}</p>
+                <Link to={`/handbook/${article.id}`} className="mt-4 inline-block font-bold text-[#b7131a]">Đọc chi tiết</Link>
+              </div>
+            </article>
+          ))}
+        </div>
+        {!filteredArticles.length && <div className="mt-8 rounded-3xl border border-dashed border-[#dfc9c6] p-10 text-center text-[#5b5f61]">Không tìm thấy bài viết phù hợp. Thử đổi từ khóa hoặc chọn chủ đề khác.</div>}
+      </main>
+    </PageShell>
+  );
+}
+
+function HandbookDetailPage() {
+  const { id } = useParams();
+  const article = handbookArticles.find((item) => item.id === id) || handbookArticles[0];
+  const relatedArticles = handbookArticles.filter((item) => item.id !== article.id && (item.topic === article.topic || item.city === article.city)).slice(0, 3);
+  const checklist = [
+    `Chuẩn bị trước: lưu địa chỉ ${article.city}, ảnh chụp hộ chiếu và thông tin khách sạn.`,
+    "Trong chuyến đi: luôn xác nhận giá, vị trí, thời gian và điều kiện dịch vụ bằng tin nhắn.",
+    "Sau khi hoàn tất: lưu hóa đơn, ảnh sản phẩm, mã vận đơn hoặc vé để đối chiếu khi cần.",
+  ];
+  const sections = [
+    ["Nên làm gì trước", article.summary],
+    ["Các lỗi thường gặp", article.topic === "Đánh hàng" ? "Đặt cọc khi chưa kiểm mẫu, không chụp lại quầy hàng, không hỏi rõ MOQ và điều kiện đổi trả." : "Không kiểm tra phương thức thanh toán, không lưu tên địa điểm bằng tiếng Trung và phụ thuộc hoàn toàn vào mạng di động."],
+    ["Câu tiếng Trung hữu ích", "请问多少钱？Có giá bao nhiêu? · 可以便宜一点吗？Có thể giảm chút không? · 请帮我写地址。Vui lòng ghi giúp địa chỉ."],
+  ];
+  return (
+    <PageShell>
+      <main className="mx-auto max-w-7xl px-4 py-8 md:px-8">
+        <Link to="/handbook" className="font-bold text-[#b7131a]">← Quay lại cẩm nang</Link>
+        <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_360px]">
+          <article className="overflow-hidden rounded-3xl border border-[#ece2e0] bg-white shadow-sm">
+            <img src={article.image} alt={article.title} className="h-80 w-full object-cover" />
+            <div className="p-6 md:p-8">
+              <div className="flex flex-wrap gap-2"><Badge tone="red">{article.topic}</Badge><Badge tone="blue">{article.city}</Badge></div>
+              <h1 className="mt-4 text-4xl font-bold tracking-[-0.05em]">{article.title}</h1>
+              <p className="mt-4 text-lg leading-8 text-[#5b403d]">{article.summary}</p>
+              <div className="mt-8 space-y-5">
+                {sections.map(([title, content]) => <section key={title} className="rounded-2xl bg-[#f8f3f2] p-5"><h2 className="text-xl font-bold">{title}</h2><p className="mt-3 leading-7 text-[#5b403d]">{content}</p></section>)}
+              </div>
+            </div>
+          </article>
+          <aside className="space-y-5">
+            <div className="rounded-3xl bg-[#fff1ef] p-6"><h2 className="text-xl font-bold">Checklist nhanh</h2><div className="mt-4 space-y-3">{checklist.map((item) => <label key={item} className="flex gap-3 rounded-2xl bg-white p-4 text-sm leading-6 text-[#5b403d]"><input type="checkbox" className="mt-1" />{item}</label>)}</div></div>
+            <div className="rounded-3xl border border-[#ece2e0] bg-white p-6"><h2 className="text-xl font-bold">Hành động tiếp theo</h2><div className="mt-4 grid gap-3"><Link to="/guides" className="rounded-xl bg-[#b7131a] px-4 py-3 text-center font-bold text-white">Tìm Local Guide</Link><Link to="/map" className="rounded-xl border border-[#e4beb9] px-4 py-3 text-center font-bold text-[#b7131a]">Mở bản đồ</Link><Link to="/ai" className="rounded-xl border border-[#e4beb9] px-4 py-3 text-center font-bold text-[#b7131a]">Hỏi trợ lý AI</Link></div></div>
+            {relatedArticles.length > 0 && <div className="rounded-3xl border border-[#ece2e0] bg-white p-6"><h2 className="text-xl font-bold">Bài liên quan</h2><div className="mt-4 space-y-3">{relatedArticles.map((item) => <Link key={item.id} to={`/handbook/${item.id}`} className="block rounded-2xl bg-[#f8f3f2] p-4"><b>{item.title}</b><p className="mt-1 text-sm text-[#5b5f61]">{item.city}</p></Link>)}</div></div>}
+          </aside>
+        </div>
+      </main>
+    </PageShell>
+  );
 }
 
 function GuideRegisterPage() {
@@ -414,15 +513,6 @@ function SafetyPage() {
 
 function UserProfilePage() {
   return <PageShell><main className="mx-auto max-w-5xl px-4 py-10 md:px-8"><div className="rounded-3xl border border-[#ece2e0] bg-white p-6 md:p-8"><div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between"><div className="flex items-center gap-4"><div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#fff1ef] text-2xl font-bold text-[#b7131a]">MA</div><div><h1 className="text-3xl font-bold tracking-[-0.04em]">Nguyễn Minh Anh</h1><p className="mt-1 text-[#5b5f61]">Khách cá nhân · Thành viên đã xác minh email</p></div></div><Link to="/booking/CTG-000001" className="rounded-xl bg-[#b7131a] px-5 py-3 text-center font-bold text-white">Xem booking gần nhất</Link></div><div className="mt-8 grid gap-4 md:grid-cols-3">{[["Booking", "3 chuyến đã đặt"], ["Guide yêu thích", "5 hồ sơ đã lưu"], ["Thành phố quan tâm", "Quảng Châu, Thâm Quyến"]].map(([title, value]) => <div key={title} className="rounded-2xl bg-[#f8f3f2] p-5"><div className="font-bold">{title}</div><div className="mt-2 text-sm text-[#5b5f61]">{value}</div></div>)}</div></div></main></PageShell>;
-}
-
-function PartnerLeadsPage() {
-  const leads = [
-    ["Khách đi Quảng Châu đánh hàng", "Cần kho nhận hàng và đóng gói trong 3 ngày", "Nóng"],
-    ["Nhóm 4 khách đi Thâm Quyến", "Tìm SIM/eSIM và xe đưa đón sân bay", "Mới"],
-    ["Shop mỹ phẩm online", "Cần tư vấn vận chuyển mỹ phẩm từ Quảng Châu", "Đang trao đổi"],
-  ];
-  return <PageShell><main className="mx-auto max-w-6xl px-4 py-10 md:px-8"><div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between"><div><h1 className="text-4xl font-bold tracking-[-0.05em]">Nguồn khách đối tác</h1><p className="mt-3 text-[#5b5f61]">Các nhu cầu dịch vụ phù hợp với hồ sơ nhà bán hàng/đối tác.</p></div><Link to="/partner-onboarding" className="font-bold text-[#b7131a]">Cập nhật hồ sơ đối tác</Link></div><div className="mt-8 grid gap-4">{leads.map(([title, desc, status]) => <article key={title} className="rounded-2xl border border-[#ece2e0] bg-white p-5 shadow-sm"><div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"><div><h2 className="text-xl font-bold">{title}</h2><p className="mt-2 text-[#5b5f61]">{desc}</p></div><span className="w-fit rounded-full bg-[#fff1ef] px-3 py-1 text-xs font-bold text-[#b7131a]">{status}</span></div></article>)}</div></main></PageShell>;
 }
 
 function WorkspacePage() {
@@ -450,29 +540,38 @@ export default function App() {
         <Route path="/markets" element={<MarketsPage />} />
         <Route path="/markets/:id" element={<MarketDetailPage />} />
         <Route path="/handbook" element={<HandbookPage />} />
+        <Route path="/handbook/:id" element={<HandbookDetailPage />} />
         <Route path="/map" element={<MapPage />} />
         <Route path="/ai" element={<AIAssistantPage />} />
         <Route path="/sourcing" element={<SourcingPage />} />
         <Route path="/guide-register" element={<GuideRegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/partner-onboarding" element={<PartnerOnboardingPage />} />
+        <Route path="/partner-onboarding" element={<Navigate to="/partner/profile" replace />} />
         <Route path="/profile" element={<UserProfilePage />} />
         <Route path="/workspace" element={<WorkspacePage />} />
+        <Route path="/partner/dashboard" element={<PartnerOverviewPage />} />
         <Route path="/partner/leads" element={<PartnerLeadsPage />} />
-        <Route path="/guide/dashboard" element={<GuideDashboard />} />
+        <Route path="/partner/services" element={<PartnerServicesPage />} />
+        <Route path="/partner/orders" element={<PartnerOrdersPage />} />
+        <Route path="/partner/profile" element={<PartnerProfilePage />} />
+        <Route path="/partner/messages" element={<PartnerMessagesPage />} />
+        <Route path="/guide/dashboard" element={<GuideOverviewPage />} />
         <Route path="/guide/bookings" element={<GuideBookingsPage />} />
         <Route path="/guide/calendar" element={<GuideCalendarPage />} />
         <Route path="/guide/profile" element={<GuideProfileManagePage />} />
         <Route path="/guide/verification" element={<GuideVerificationPage />} />
-        <Route path="/dashboard" element={<GuideDashboard />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/guide/earnings" element={<GuideEarningsPage />} />
+        <Route path="/guide/messages" element={<GuideMessagesPage />} />
+        <Route path="/dashboard" element={<Navigate to="/guide/dashboard" replace />} />
+        <Route path="/admin" element={<AdminOverviewPage />} />
         <Route path="/admin/users" element={<AdminUsersPage />} />
         <Route path="/admin/guides" element={<AdminGuidesPage />} />
         <Route path="/admin/bookings" element={<AdminBookingsPage />} />
         <Route path="/admin/reports" element={<AdminReportsPage />} />
         <Route path="/admin/partners" element={<AdminPartnersPage />} />
-        <Route path="/revenue" element={<RevenueDashboard />} />
+        <Route path="/admin/revenue" element={<AdminRevenuePage />} />
+        <Route path="/revenue" element={<Navigate to="/guide/earnings" replace />} />
         <Route path="/safety" element={<SafetyPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
