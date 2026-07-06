@@ -17,16 +17,19 @@ const roleNavItems: Record<AccountRole, { to: string; label: string }[]> = {
     { to: "/messages", label: "Tin nhắn" },
   ],
   guide: [
-    { to: "/dashboard", label: "Dashboard guide" },
-    { to: "/messages", label: "Tin nhắn" },
-    { to: "/revenue", label: "Thu nhập" },
+    { to: "/guide/dashboard", label: "Khu vực guide" },
   ],
   merchant: [
     { to: "/partner-onboarding", label: "Hồ sơ đối tác" },
     { to: "/partner/leads", label: "Nguồn khách" },
   ],
   admin: [
-    { to: "/admin", label: "Quản trị" },
+    { to: "/admin", label: "Tổng quan admin" },
+    { to: "/admin/users", label: "Người dùng" },
+    { to: "/admin/guides", label: "Guide" },
+    { to: "/admin/bookings", label: "Booking" },
+    { to: "/admin/reports", label: "Báo cáo" },
+    { to: "/admin/partners", label: "Đối tác" },
     { to: "/revenue", label: "Doanh thu" },
   ],
 };

@@ -10,6 +10,8 @@ import { SourcingPage } from "./pages/SourcingPage";
 import { PublicLayout } from "./components/layout/PublicLayout";
 import { LoginPage, PartnerOnboardingPage, RegisterPage } from "./pages/AuthPages";
 import { getSession, roleHomePath } from "./lib/auth";
+import { GuideBookingsPage, GuideCalendarPage, GuideProfileManagePage, GuideVerificationPage } from "./pages/GuidePages";
+import { AdminBookingsPage, AdminGuidesPage, AdminPartnersPage, AdminReportsPage, AdminUsersPage } from "./pages/AdminPages";
 import {
   assets,
   durationLabels,
@@ -459,8 +461,17 @@ export default function App() {
         <Route path="/workspace" element={<WorkspacePage />} />
         <Route path="/partner/leads" element={<PartnerLeadsPage />} />
         <Route path="/guide/dashboard" element={<GuideDashboard />} />
+        <Route path="/guide/bookings" element={<GuideBookingsPage />} />
+        <Route path="/guide/calendar" element={<GuideCalendarPage />} />
+        <Route path="/guide/profile" element={<GuideProfileManagePage />} />
+        <Route path="/guide/verification" element={<GuideVerificationPage />} />
         <Route path="/dashboard" element={<GuideDashboard />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<AdminUsersPage />} />
+        <Route path="/admin/guides" element={<AdminGuidesPage />} />
+        <Route path="/admin/bookings" element={<AdminBookingsPage />} />
+        <Route path="/admin/reports" element={<AdminReportsPage />} />
+        <Route path="/admin/partners" element={<AdminPartnersPage />} />
         <Route path="/revenue" element={<RevenueDashboard />} />
         <Route path="/safety" element={<SafetyPage />} />
         <Route path="*" element={<NotFoundPage />} />
