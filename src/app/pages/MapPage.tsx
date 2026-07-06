@@ -1,322 +1,182 @@
+import { useMemo, useState } from "react";
 import { Link } from "react-router";
-import { useState } from "react";
-import svgPathsMap from "@/assets/generated/map/svg-paths";
 import mapPlaceholder from "@/assets/generated/map/map-placeholder.png";
 import marketImage from "@/assets/generated/map/market.png";
 
-const places = [
+type PlaceType = "market" | "metro" | "atm" | "hospital" | "restroom";
+
+type Place = {
+  id: string;
+  name: string;
+  type: PlaceType;
+  district: string;
+  image: string;
+  metro: string;
+  hours: string;
+  note: string;
+};
+
+const places: Place[] = [
   {
-    id: 1,
-    name: "Guangzhou Baima Clothing Market",
-    district: "Yuexiu District, Guangzhou",
+    id: "baima",
+    name: "Chợ Bạch Mã",
+    type: "market",
+    district: "Yuexiu, Quảng Châu",
     image: marketImage,
-    metro: "Guangzhou Railway Sta. (Line 2/5)",
+    metro: "Ga Guangzhou Railway Station, Line 2/5",
     hours: "08:00 - 18:00",
-    isFavorite: true,
+    note: "Phù hợp tìm nguồn quần áo trung - cao cấp, nên đi cùng guide nếu lần đầu mặc cả.",
+  },
+  {
+    id: "shahe",
+    name: "Chợ Sha He",
+    type: "market",
+    district: "Tianhe, Quảng Châu",
+    image: marketImage,
+    metro: "Ga Shaheding, Line 6",
+    hours: "06:00 - 15:00",
+    note: "Nguồn hàng giá tốt, đông vào buổi sáng, cần kiểm hàng kỹ trước khi gửi kho.",
+  },
+  {
+    id: "atm-railway",
+    name: "ATM gần ga Quảng Châu",
+    type: "atm",
+    district: "Guangzhou Railway Station",
+    image: marketImage,
+    metro: "Cổng B ga Guangzhou Railway Station",
+    hours: "24/7",
+    note: "Nên kiểm tra phí rút tiền quốc tế trước khi sử dụng.",
+  },
+  {
+    id: "hospital-yuexiu",
+    name: "Bệnh viện Yuexiu",
+    type: "hospital",
+    district: "Yuexiu, Quảng Châu",
+    image: marketImage,
+    metro: "Line 2, cách chợ Bạch Mã khoảng 12 phút taxi",
+    hours: "24/7",
+    note: "Lưu số hộ chiếu, bảo hiểm và liên hệ khẩn cấp trước khi đi.",
   },
 ];
 
-export function MapPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [translationActive, setTranslationActive] = useState(true);
-  const [selectedTransit, setSelectedTransit] = useState<"metro" | "bus" | "taxi">("metro");
-  const [activeFilters, setActiveFilters] = useState<string[]>(["atms"]);
-  const [selectedPlace, setSelectedPlace] = useState(places[0]);
+const filters: { id: PlaceType | "all"; label: string }[] = [
+  { id: "all", label: "Tất cả" },
+  { id: "market", label: "Chợ đầu mối" },
+  { id: "metro", label: "Metro" },
+  { id: "atm", label: "ATM" },
+  { id: "hospital", label: "Bệnh viện" },
+  { id: "restroom", label: "Nhà vệ sinh" },
+];
 
-  const toggleFilter = (filter: string) => {
-    setActiveFilters((prev) => (prev.includes(filter) ? prev.filter((f) => f !== filter) : [...prev, filter]));
-  };
+export function MapPage() {
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState<PlaceType | "all">("all");
+  const [selectedTransit, setSelectedTransit] = useState<"metro" | "taxi" | "walk">("metro");
+  const [offlineDownloaded, setOfflineDownloaded] = useState(false);
+  const filteredPlaces = useMemo(() => {
+    return places.filter((place) => {
+      const matchesFilter = filter === "all" || place.type === filter;
+      const matchesQuery = `${place.name} ${place.district} ${place.note}`.toLowerCase().includes(query.toLowerCase());
+      return matchesFilter && matchesQuery;
+    });
+  }, [filter, query]);
+  const [selectedId, setSelectedId] = useState(places[0].id);
+  const selectedPlace = places.find((place) => place.id === selectedId) || filteredPlaces[0] || places[0];
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      {/* ── Header ── */}
-      <header className="border-b border-[#e2e2e5] bg-white px-[40px] py-[16px]">
-        <div className="flex items-center justify-between">
-          <Link to="/" className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#b7131a] text-[48px] leading-[52.8px] tracking-[-0.96px]">
-            C-TourGuide
-          </Link>
-
-          {/* Navigation */}
-          <nav className="flex gap-[32px] items-center">
-            <Link to="/search" className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px] tracking-[0.14px] hover:text-[#b7131a] transition-colors">
-              Search
-            </Link>
-            <Link to="/handbook" className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px] tracking-[0.14px] hover:text-[#b7131a] transition-colors">
-              Handbook
-            </Link>
-            <div className="relative pb-[6px] border-b-2 border-[#b7131a]">
-              <span className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#b7131a] text-[14px] tracking-[0.14px]">Map</span>
-            </div>
-            <Link to="/" className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px] tracking-[0.14px] hover:text-[#b7131a] transition-colors">
-              Sourcing
-            </Link>
-            <Link to="/" className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px] tracking-[0.14px] hover:text-[#b7131a] transition-colors">
-              AI
-            </Link>
+    <div className="min-h-screen bg-[#fffdfc] font-['Be_Vietnam_Pro',sans-serif] text-[#1a1c1e]">
+      <header className="border-b border-[#f0d8d5] bg-white px-4 py-4 md:px-8">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
+          <Link to="/" className="text-2xl font-bold text-[#b7131a]">C-TourGuide</Link>
+          <nav className="hidden gap-6 text-sm font-semibold text-[#5b5f61] md:flex">
+            <Link to="/guides">Tìm guide</Link>
+            <Link to="/markets">Đánh hàng</Link>
+            <Link to="/handbook">Cẩm nang</Link>
+            <Link to="/ai">Trợ lý AI</Link>
           </nav>
-
-          {/* Right Actions */}
-          <div className="flex gap-[16px] items-center">
-            <button className="p-[8px] rounded-full hover:bg-[#f9f9fc] transition-colors">
-              <svg className="w-[16px] h-[20px]" fill="none" viewBox="0 0 16 20">
-                <path d={svgPathsMap.p164b49c0} fill="#B7131A" />
-              </svg>
-            </button>
-            <button className="p-[8px] rounded-full hover:bg-[#f9f9fc] transition-colors">
-              <svg className="w-[20px] h-[20px]" fill="none" viewBox="0 0 20 20">
-                <path d={svgPathsMap.p1fe7b600} fill="#B7131A" />
-              </svg>
-            </button>
-            <button className="p-[8px] rounded-full hover:bg-[#f9f9fc] transition-colors">
-              <svg className="w-[20px] h-[20px]" fill="none" viewBox="0 0 20 20">
-                <path d={svgPathsMap.p3de21300} fill="#B7131A" />
-              </svg>
-            </button>
-            <Link
-              to="/dashboard"
-              className="bg-[#b7131a] px-[16px] py-[8px] rounded-[8px] font-['Be_Vietnam_Pro',sans-serif] font-semibold text-white text-[14px] tracking-[0.14px] hover:bg-[#db322f] transition-colors"
-            >
-              Register as Guide
-            </Link>
-          </div>
+          <Link to="/guide-register" className="rounded-xl bg-[#b7131a] px-4 py-2 text-sm font-bold text-white">Đăng ký làm guide</Link>
         </div>
       </header>
 
-      {/* ── Main Content ── */}
-      <div className="flex flex-1 relative">
-        {/* Left Sidebar */}
-        <aside className="w-[280px] bg-white border-r border-[#e2e2e5] flex flex-col overflow-y-auto">
-          <div className="p-[20px]">
-            {/* Search Box */}
-            <div className="relative mb-[16px]">
-              <input
-                type="text"
-                placeholder="Tìm kiếm địa điểm..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-white border border-[#e2e2e5] rounded-[8px] pl-[40px] pr-[40px] py-[12px] font-['Be_Vietnam_Pro',sans-serif] text-[14px] text-[#1a1c1e] placeholder:text-[#5b5f61] focus:outline-none focus:border-[#b7131a]"
-              />
-              <svg className="absolute left-[12px] top-1/2 -translate-y-1/2 w-[18px] h-[18px]" fill="none" viewBox="0 0 18 18">
-                <path d={svgPathsMap.p8a35e00} fill="#5B5F61" />
-              </svg>
-              <button className="absolute right-[8px] top-1/2 -translate-y-1/2 p-[4px]">
-                <svg className="w-[20px] h-[20px]" fill="none" viewBox="0 0 20 20">
-                  <path d={svgPathsMap.p3ac62a80} fill="#B7131A" />
-                </svg>
+      <main className="mx-auto grid max-w-7xl gap-6 px-4 py-8 md:grid-cols-[340px_1fr_340px] md:px-8">
+        <aside className="rounded-3xl bg-[#f8f3f2] p-5">
+          <h1 className="text-2xl font-bold">Bản đồ Trung Quốc</h1>
+          <p className="mt-2 text-sm leading-6 text-[#5b5f61]">Mock map dành cho khách Việt: chợ, metro, ATM, bệnh viện và điểm tiện ích.</p>
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Tìm Bạch Mã, ATM, bệnh viện..."
+            className="mt-5 w-full rounded-xl border border-[#e2e2e5] bg-white px-4 py-3 outline-none focus:border-[#b7131a]"
+          />
+          <div className="mt-4 flex flex-wrap gap-2">
+            {filters.map((item) => (
+              <button key={item.id} onClick={() => setFilter(item.id)} className={`rounded-full px-3 py-2 text-xs font-bold ${filter === item.id ? "bg-[#b7131a] text-white" : "bg-white text-[#5b403d]"}`}>
+                {item.label}
+              </button>
+            ))}
+          </div>
+          <div className="mt-5 space-y-3">
+            {filteredPlaces.length ? filteredPlaces.map((place) => (
+              <button key={place.id} onClick={() => setSelectedId(place.id)} className={`w-full rounded-2xl p-4 text-left shadow-sm ${selectedPlace.id === place.id ? "bg-[#fff1ef] ring-2 ring-[#b7131a]" : "bg-white"}`}>
+                <div className="font-bold">{place.name}</div>
+                <div className="mt-1 text-sm text-[#5b5f61]">{place.district}</div>
+              </button>
+            )) : <div className="rounded-2xl border border-dashed border-[#dfc9c6] p-5 text-center text-sm text-[#5b5f61]">Không có địa điểm phù hợp.</div>}
+          </div>
+          <div className="mt-5 rounded-2xl bg-white p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <div className="font-bold">Bản đồ offline Quảng Châu</div>
+                <div className="mt-1 text-xs text-[#5b5f61]">145 MB · cập nhật hôm nay</div>
+              </div>
+              <button onClick={() => setOfflineDownloaded(true)} className="rounded-xl bg-[#b7131a] px-4 py-2 text-xs font-bold text-white">
+                {offlineDownloaded ? "Đã tải" : "Tải"}
               </button>
             </div>
-
-            {/* Translation Toggle */}
-            <div className="flex items-center justify-between mb-[24px] p-[8px] bg-[#f9f9fc] rounded-[6px]">
-              <span className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[12px]">Chinese-Vietnamese Translation Active</span>
-            </div>
-
-            {/* Transit Options */}
-            <div className="mb-[24px]">
-              <h3 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[16px] mb-[12px]">Transit Options</h3>
-              <div className="flex gap-[12px]">
-                <button
-                  onClick={() => setSelectedTransit("metro")}
-                  className={`flex-1 flex flex-col items-center gap-[8px] p-[12px] rounded-[8px] border transition-colors ${
-                    selectedTransit === "metro" ? "bg-[#b7131a] border-[#b7131a]" : "bg-white border-[#e2e2e5] hover:border-[#b7131a]"
-                  }`}
-                >
-                  <svg className="w-[24px] h-[24px]" fill="none" viewBox="0 0 24 24">
-                    <path d={svgPathsMap.p43f11e00} fill={selectedTransit === "metro" ? "white" : "#B7131A"} />
-                  </svg>
-                  <span className={`font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[12px] ${selectedTransit === "metro" ? "text-white" : "text-[#1a1c1e]"}`}>Metro</span>
-                </button>
-                <button
-                  onClick={() => setSelectedTransit("bus")}
-                  className={`flex-1 flex flex-col items-center gap-[8px] p-[12px] rounded-[8px] border transition-colors ${
-                    selectedTransit === "bus" ? "bg-[#b7131a] border-[#b7131a]" : "bg-white border-[#e2e2e5] hover:border-[#b7131a]"
-                  }`}
-                >
-                  <svg className="w-[24px] h-[24px]" fill="none" viewBox="0 0 24 24">
-                    <path d={svgPathsMap.p4f66f780} fill={selectedTransit === "bus" ? "white" : "#5B5F61"} />
-                  </svg>
-                  <span className={`font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[12px] ${selectedTransit === "bus" ? "text-white" : "text-[#1a1c1e]"}`}>Bus</span>
-                </button>
-                <button
-                  onClick={() => setSelectedTransit("taxi")}
-                  className={`flex-1 flex flex-col items-center gap-[8px] p-[12px] rounded-[8px] border transition-colors ${
-                    selectedTransit === "taxi" ? "bg-[#b7131a] border-[#b7131a]" : "bg-white border-[#e2e2e5] hover:border-[#b7131a]"
-                  }`}
-                >
-                  <svg className="w-[24px] h-[24px]" fill="none" viewBox="0 0 24 24">
-                    <path d={svgPathsMap.p37b5f980} fill={selectedTransit === "taxi" ? "white" : "#5B5F61"} />
-                  </svg>
-                  <span className={`font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[12px] ${selectedTransit === "taxi" ? "text-white" : "text-[#1a1c1e]"}`}>Taxi</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Quick Filters */}
-            <div className="mb-[24px]">
-              <h3 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[16px] mb-[12px]">Quick Filters</h3>
-              <div className="flex flex-wrap gap-[8px]">
-                <button
-                  onClick={() => toggleFilter("wholesale")}
-                  className={`flex items-center gap-[6px] px-[12px] py-[6px] rounded-full border transition-colors ${
-                    activeFilters.includes("wholesale") ? "bg-white border-[#b7131a] text-[#b7131a]" : "bg-white border-[#e2e2e5] text-[#5b5f61] hover:border-[#b7131a]"
-                  }`}
-                >
-                  <svg className="w-[12px] h-[12px]" fill="none" viewBox="0 0 12 12">
-                    <path d={svgPathsMap.p318ecc80} fill={activeFilters.includes("wholesale") ? "#B7131A" : "#5B5F61"} />
-                  </svg>
-                  <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[12px]">Wholesale</span>
-                </button>
-                <button
-                  onClick={() => toggleFilter("atms")}
-                  className={`flex items-center gap-[6px] px-[12px] py-[6px] rounded-full transition-colors ${
-                    activeFilters.includes("atms") ? "bg-[#b7131a] text-white" : "bg-white border border-[#e2e2e5] text-[#5b5f61] hover:border-[#b7131a]"
-                  }`}
-                >
-                  <svg className="w-[12px] h-[12px]" fill="none" viewBox="0 0 12 12">
-                    <path d={svgPathsMap.p50c8cc00} fill={activeFilters.includes("atms") ? "white" : "#5B5F61"} />
-                  </svg>
-                  <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[12px]">ATMs</span>
-                </button>
-                <button
-                  onClick={() => toggleFilter("hospitals")}
-                  className={`flex items-center gap-[6px] px-[12px] py-[6px] rounded-full border transition-colors ${
-                    activeFilters.includes("hospitals") ? "bg-white border-[#b7131a] text-[#b7131a]" : "bg-white border-[#e2e2e5] text-[#5b5f61] hover:border-[#b7131a]"
-                  }`}
-                >
-                  <svg className="w-[12px] h-[12px]" fill="none" viewBox="0 0 12 12">
-                    <path d={svgPathsMap.p5e37fc00} fill={activeFilters.includes("hospitals") ? "#B7131A" : "#5B5F61"} />
-                  </svg>
-                  <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[12px]">Hospitals</span>
-                </button>
-                <button
-                  onClick={() => toggleFilter("restrooms")}
-                  className={`flex items-center gap-[6px] px-[12px] py-[6px] rounded-full border transition-colors ${
-                    activeFilters.includes("restrooms") ? "bg-white border-[#b7131a] text-[#b7131a]" : "bg-white border-[#e2e2e5] text-[#5b5f61] hover:border-[#b7131a]"
-                  }`}
-                >
-                  <svg className="w-[12px] h-[12px]" fill="none" viewBox="0 0 12 12">
-                    <path d={svgPathsMap.p55a1b780} fill={activeFilters.includes("restrooms") ? "#B7131A" : "#5B5F61"} />
-                  </svg>
-                  <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[12px]">Restrooms</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Offline Maps */}
-            <div className="pt-[24px] border-t border-[#e2e2e5]">
-              <div className="flex items-center justify-between mb-[12px]">
-                <h3 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[16px]">Offline Maps</h3>
-                <button className="p-[4px]">
-                  <svg className="w-[20px] h-[20px]" fill="none" viewBox="0 0 20 20">
-                    <path d={svgPathsMap.p5a0a780} fill="#B7131A" />
-                  </svg>
-                </button>
-              </div>
-              <div className="flex items-center justify-between p-[12px] bg-[#f9f9fc] rounded-[8px]">
-                <div className="flex-1">
-                  <div className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#1a1c1e] text-[14px] mb-[2px]">Guangzhou Region</div>
-                  <div className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[11px]">145 MB • Updated Today</div>
-                </div>
-                <button className="p-[4px]">
-                  <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 16 16">
-                    <path d={svgPathsMap.p12e12780} fill="#B7131A" />
-                  </svg>
-                </button>
-              </div>
-            </div>
           </div>
         </aside>
 
-        {/* Map Area */}
-        <div className="flex-1 relative bg-[#e8e8ec]">
-          <img src={mapPlaceholder} alt="Map" className="w-full h-full object-cover" />
-
-          {/* Map Controls */}
-          <div className="absolute right-[24px] top-[24px] flex flex-col gap-[8px]">
-            <button className="bg-white border border-[#e2e2e5] rounded-[8px] size-[40px] flex items-center justify-center hover:bg-[#f9f9fc] transition-colors drop-shadow-md">
-              <svg className="w-[20px] h-[20px]" fill="none" viewBox="0 0 20 20">
-                <path d={svgPathsMap.p6fa8900} fill="#1A1C1E" />
-              </svg>
-            </button>
-            <button className="bg-white border border-[#e2e2e5] rounded-[8px] size-[40px] flex items-center justify-center hover:bg-[#f9f9fc] transition-colors drop-shadow-md">
-              <svg className="w-[20px] h-[4px]" fill="none" viewBox="0 0 20 4">
-                <rect width="20" height="4" fill="#1A1C1E" rx="2" />
-              </svg>
-            </button>
+        <section className="relative min-h-[560px] overflow-hidden rounded-3xl border border-[#ece2e0] bg-[#e8e8ec] shadow-sm">
+          <img src={mapPlaceholder} alt="Bản đồ mock Quảng Châu" className="h-full min-h-[560px] w-full object-cover" />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full rounded-full bg-[#b7131a] px-4 py-3 font-bold text-white shadow-xl">
+            {selectedPlace.name}
           </div>
-
-          {/* Location Marker */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full">
-            <svg className="w-[40px] h-[50px]" fill="none" viewBox="0 0 40 50">
-              <path d={svgPathsMap.p12dcc100} fill="#B7131A" />
-              <circle cx="20" cy="18" r="8" fill="white" />
-            </svg>
+          <div className="absolute left-5 top-5 rounded-2xl bg-white/95 p-4 shadow-lg">
+            <div className="text-sm font-bold">Dịch Trung - Việt đang bật</div>
+            <div className="mt-1 text-xs text-[#5b5f61]">Tên địa điểm và ghi chú đã được Việt hóa.</div>
           </div>
-        </div>
+        </section>
 
-        {/* Right Sidebar - Place Details */}
-        <aside className="w-[320px] bg-white border-l border-[#e2e2e5] flex flex-col">
-          <div className="relative h-[200px]">
-            <img src={selectedPlace.image} alt={selectedPlace.name} className="w-full h-full object-cover" />
-            <button className="absolute top-[12px] right-[12px] bg-white rounded-full size-[40px] flex items-center justify-center drop-shadow-md hover:bg-[#f9f9fc] transition-colors">
-              <svg className="w-[20px] h-[20px]" fill="none" viewBox="0 0 20 20">
-                <path
-                  d={svgPathsMap.p6113c00}
-                  fill={selectedPlace.isFavorite ? "#B7131A" : "none"}
-                  stroke="#B7131A"
-                  strokeWidth="2"
-                />
-              </svg>
-            </button>
+        <aside className="rounded-3xl border border-[#ece2e0] bg-white p-5 shadow-sm">
+          <img src={selectedPlace.image} alt={selectedPlace.name} className="h-44 w-full rounded-2xl object-cover" />
+          <h2 className="mt-5 text-2xl font-bold">{selectedPlace.name}</h2>
+          <p className="mt-1 text-sm text-[#5b5f61]">{selectedPlace.district}</p>
+          <div className="mt-5 space-y-3 text-sm">
+            <div className="rounded-2xl bg-[#f8f3f2] p-4"><b>Ga gần nhất</b><p className="mt-1 text-[#5b403d]">{selectedPlace.metro}</p></div>
+            <div className="rounded-2xl bg-[#f8f3f2] p-4"><b>Giờ hoạt động</b><p className="mt-1 text-[#5b403d]">{selectedPlace.hours}</p></div>
+            <div className="rounded-2xl bg-[#f8f3f2] p-4"><b>Lưu ý</b><p className="mt-1 leading-6 text-[#5b403d]">{selectedPlace.note}</p></div>
           </div>
-
-          <div className="flex-1 p-[20px] overflow-y-auto">
-            <h2 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[24px] leading-[28.8px] mb-[8px]">{selectedPlace.name}</h2>
-            <div className="flex items-center gap-[6px] mb-[24px]">
-              <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 16 16">
-                <path d={svgPathsMap.p8a0be00} fill="#5B5F61" />
-              </svg>
-              <span className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[14px]">{selectedPlace.district}</span>
+          <div className="mt-5">
+            <h3 className="font-bold">Chỉ đường mock</h3>
+            <div className="mt-3 grid grid-cols-3 gap-2">
+              {[
+                ["metro", "Metro"],
+                ["taxi", "Taxi"],
+                ["walk", "Đi bộ"],
+              ].map(([value, label]) => (
+                <button key={value} onClick={() => setSelectedTransit(value as "metro" | "taxi" | "walk")} className={`rounded-xl px-3 py-2 text-sm font-bold ${selectedTransit === value ? "bg-[#b7131a] text-white" : "bg-[#f2f2f4] text-[#5b403d]"}`}>
+                  {label}
+                </button>
+              ))}
             </div>
-
-            {/* Metro Info */}
-            <div className="bg-[#f9f9fc] border border-[#e2e2e5] rounded-[8px] p-[16px] mb-[16px]">
-              <div className="flex items-start gap-[12px]">
-                <div className="bg-[#b7131a] rounded-[6px] p-[8px] flex items-center justify-center">
-                  <svg className="w-[20px] h-[20px]" fill="none" viewBox="0 0 20 20">
-                    <path d={svgPathsMap.p43f11e00} fill="white" />
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <div className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[12px] mb-[2px]">Nearest Metro</div>
-                  <div className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#1a1c1e] text-[14px]">{selectedPlace.metro}</div>
-                </div>
-              </div>
+            <div className="mt-3 rounded-2xl border border-[#f0d8d5] p-4 text-sm leading-6 text-[#5b403d]">
+              {selectedTransit === "metro" && "Gợi ý: đi metro đến ga gần nhất, sau đó đi bộ 6-10 phút. Phù hợp nếu bạn mang ít hàng."}
+              {selectedTransit === "taxi" && "Gợi ý: dùng địa chỉ tiếng Trung từ guide, xác nhận cổng vào trước khi xuống xe."}
+              {selectedTransit === "walk" && "Gợi ý: chỉ nên đi bộ nếu bạn đang ở khu chợ lân cận và không mang kiện hàng lớn."}
             </div>
-
-            {/* Hours Info */}
-            <div className="bg-[#f9f9fc] border border-[#e2e2e5] rounded-[8px] p-[16px] mb-[16px]">
-              <div className="flex items-start gap-[12px]">
-                <svg className="w-[20px] h-[20px] mt-[2px]" fill="none" viewBox="0 0 20 20">
-                  <path d={svgPathsMap.p3a70b100} fill="#5B5F61" />
-                </svg>
-                <div className="flex-1">
-                  <div className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[12px] mb-[2px]">Hours</div>
-                  <div className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#1a1c1e] text-[14px]">{selectedPlace.hours}</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Get Directions Button */}
-            <button className="w-full bg-[#b7131a] rounded-[8px] px-[20px] py-[14px] flex items-center justify-center gap-[8px] hover:bg-[#db322f] transition-colors">
-              <svg className="w-[20px] h-[20px]" fill="none" viewBox="0 0 20 20">
-                <path d={svgPathsMap.p2c2df680} fill="white" />
-              </svg>
-              <span className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-white text-[16px]">Get Directions</span>
-            </button>
           </div>
         </aside>
-      </div>
+      </main>
     </div>
   );
 }

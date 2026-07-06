@@ -5,58 +5,55 @@ import svgPaths from "@/assets/generated/revenue-dashboard/svg-paths";
 import userAvatar1 from "@/assets/generated/revenue-dashboard/earner-avatar-1.png";
 import userAvatar2 from "@/assets/generated/revenue-dashboard/earner-avatar-2.png";
 
-// Revenue growth data
 const revenueData = [
-  { month: "Jan", value: 65000 },
-  { month: "Feb", value: 85000 },
-  { month: "Mar", value: 95000 },
-  { month: "Apr", value: 90000 },
-  { month: "May", value: 120000 },
-  { month: "Jun", value: 130000 },
-  { month: "Jul", value: 125000 },
-  { month: "Aug", value: 145000 },
-  { month: "Sep", value: 155000 },
-  { month: "Oct", value: 130000 },
+  { month: "T1", value: 65000 },
+  { month: "T2", value: 85000 },
+  { month: "T3", value: 95000 },
+  { month: "T4", value: 90000 },
+  { month: "T5", value: 120000 },
+  { month: "T6", value: 130000 },
+  { month: "T7", value: 125000 },
+  { month: "T8", value: 145000 },
+  { month: "T9", value: 155000 },
+  { month: "T10", value: 130000 },
 ];
 
-// Revenue sources data
 const sourcesData = [
-  { name: "Commissions", value: 124500, color: "#B7131A" },
-  { name: "Premium Fees", value: 45200, color: "#DB322F" },
-  { name: "Platform Fees", value: 18400, color: "#FFB4AB" },
+  { name: "Hoa hồng booking", value: 124500, color: "#B7131A" },
+  { name: "Premium guide", value: 45200, color: "#DB322F" },
+  { name: "Phí nền tảng", value: 18400, color: "#FFB4AB" },
 ];
 
-// Recent earnings
 const earnings = [
   {
     id: "#BK-9921",
-    user: "Anh Nguyen",
+    user: "Anh Nguyễn",
     initials: "AN",
     avatar: userAvatar1,
-    service: "Private Tour",
+    service: "Tour riêng",
     commission: "¥150",
-    status: "Completed",
-    date: "Oct 24, 2024",
+    status: "Hoàn thành",
+    date: "24/10/2024",
   },
   {
     id: "#BK-9920",
     user: "Tran Minh",
     initials: "TM",
     avatar: userAvatar2,
-    service: "Translation",
+    service: "Phiên dịch",
     commission: "¥45",
-    status: "Completed",
-    date: "Oct 23, 2024",
+    status: "Hoàn thành",
+    date: "23/10/2024",
   },
   {
     id: "#BK-9919",
-    user: "Le Hoa",
+    user: "Lê Hoa",
     initials: "LH",
     avatar: null,
-    service: "Group Tour",
+    service: "Tour nhóm",
     commission: "¥300",
-    status: "Pending",
-    date: "Oct 22, 2024",
+    status: "Chờ xử lý",
+    date: "22/10/2024",
   },
 ];
 
@@ -70,8 +67,8 @@ export function RevenueDashboard() {
         {/* Logo Section */}
         <div className="p-[24px] pb-[32px]">
           <div className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#b7131a] text-[20px] leading-[28px] mb-[4px]">C-TourGuide</div>
-          <div className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b403d] text-[12px] leading-[16.8px]">Guide Dashboard</div>
-          <div className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[12px] leading-[16.8px]">Managing your services</div>
+          <div className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b403d] text-[12px] leading-[16.8px]">Dashboard guide</div>
+          <div className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[12px] leading-[16.8px]">Quản lý dịch vụ</div>
         </div>
 
         {/* Navigation */}
@@ -80,21 +77,21 @@ export function RevenueDashboard() {
             <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 18 18">
               <path d={svgPaths.p20793584} fill="#5B403D" />
             </svg>
-            <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b403d] text-[14px] tracking-[0.14px]">Overview</span>
+            <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b403d] text-[14px] tracking-[0.14px]">Tổng quan</span>
           </Link>
 
-          <Link to="/booking" className="flex items-center gap-[12px] p-[12px] rounded-[8px] hover:bg-[#f3f3f6] transition-colors mb-[4px]">
+          <Link to="/guides" className="flex items-center gap-[12px] p-[12px] rounded-[8px] hover:bg-[#f3f3f6] transition-colors mb-[4px]">
             <svg className="w-[18px] h-[20px]" fill="none" viewBox="0 0 18 20">
               <path d={svgPaths.pd0beb00} fill="#5B403D" />
             </svg>
-            <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b403d] text-[14px] tracking-[0.14px]">Bookings</span>
+            <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b403d] text-[14px] tracking-[0.14px]">Booking</span>
           </Link>
 
           <Link to="/dashboard" className="flex items-center gap-[12px] p-[12px] rounded-[8px] hover:bg-[#f3f3f6] transition-colors mb-[4px]">
             <svg className="w-[18px] h-[20px]" fill="none" viewBox="0 0 18 20">
               <path d={svgPaths.p3c95900} fill="#5B403D" />
             </svg>
-            <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b403d] text-[14px] tracking-[0.14px]">Schedule</span>
+            <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b403d] text-[14px] tracking-[0.14px]">Lịch làm việc</span>
           </Link>
 
           {/* Active: Earnings */}
@@ -102,7 +99,7 @@ export function RevenueDashboard() {
             <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 18 18">
               <path d={svgPaths.p1ce44900} fill="#B7131A" />
             </svg>
-            <span className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#b7131a] text-[14px] tracking-[0.14px]">Earnings</span>
+            <span className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#b7131a] text-[14px] tracking-[0.14px]">Thu nhập</span>
           </div>
         </nav>
 
@@ -112,7 +109,7 @@ export function RevenueDashboard() {
             <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 18 18">
               <path d={svgPaths.p3bec4580} fill="#5B403D" />
             </svg>
-            <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b403d] text-[14px] tracking-[0.14px]">Settings</span>
+            <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b403d] text-[14px] tracking-[0.14px]">Cài đặt</span>
           </button>
         </div>
       </aside>
@@ -124,8 +121,8 @@ export function RevenueDashboard() {
           <div className="mb-[40px]">
             <div className="flex items-start justify-between mb-[8px]">
               <div>
-                <h1 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[40px] leading-[48px] mb-[8px]">Revenue Dashboard</h1>
-                <p className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[14px]">Monitor platform earnings and performance.</p>
+                <h1 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[40px] leading-[48px] mb-[8px]">Bảng doanh thu</h1>
+                <p className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[14px]">Theo dõi hoa hồng, gói premium và hiệu suất nền tảng.</p>
               </div>
 
               {/* Time Period Tabs */}

@@ -97,10 +97,10 @@ export function SourcingPage() {
               </svg>
             </button>
             <Link
-              to="/dashboard"
+              to="/guide-register"
               className="bg-[#b7131a] px-[16px] py-[8px] rounded-[8px] font-['Be_Vietnam_Pro',sans-serif] font-semibold text-white text-[14px] tracking-[0.14px] hover:bg-[#db322f] transition-colors"
             >
-              Register as Guide
+              Đăng ký làm guide
             </Link>
           </div>
         </div>
@@ -113,14 +113,14 @@ export function SourcingPage() {
             {/* Left Content */}
             <div className="flex-1">
               <h1 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[48px] leading-[52.8px] tracking-[-0.96px] mb-[24px]">
-                Strategic Sourcing for
+                Đi Trung Quốc đánh hàng
                 <br />
-                Business Travelers
+                dễ hơn
               </h1>
               <p className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b403d] text-[18px] leading-[28.8px] mb-[32px]">
-                Access top-tier wholesale markets, professional negotiation
+                Tìm chợ đầu mối, thuê guide biết mặc cả
                 <br />
-                guides, and reliable logistics networks across China.
+                và kết nối kho vận tin cậy tại Trung Quốc.
               </p>
 
               <div className="flex gap-[16px]">
@@ -128,10 +128,10 @@ export function SourcingPage() {
                   <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 18 18">
                     <path d={svgPathsSourcing.p8a35e00} fill="white" />
                   </svg>
-                  <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-white text-[14px] tracking-[0.14px]">Find Markets</span>
+                  <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-white text-[14px] tracking-[0.14px]">Tìm chợ</span>
                 </button>
                 <button className="border border-[#b7131a] px-[24px] py-[12px] rounded-[8px] hover:bg-[#fff5f5] transition-colors">
-                  <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#b7131a] text-[14px] tracking-[0.14px]">Book a Guide</span>
+                  <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#b7131a] text-[14px] tracking-[0.14px]">Thuê guide</span>
                 </button>
               </div>
             </div>
@@ -150,7 +150,7 @@ export function SourcingPage() {
       <section className="px-[40px] py-[80px]">
         <div className="max-w-[1200px] mx-auto">
           <h2 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[40px] leading-[48px] tracking-[-0.8px] mb-[48px]">
-            Wholesale Market Directory
+            Danh sách chợ đầu mối
           </h2>
 
           {/* Market Grid */}
@@ -191,7 +191,7 @@ export function SourcingPage() {
 
                 {/* View Map Link */}
                 <div className="p-[20px] border-t border-[#e2e2e5] flex items-center justify-between">
-                  <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#b7131a] text-[14px]">View Map</span>
+                  <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#b7131a] text-[14px]">Xem bản đồ</span>
                   <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 16 16">
                     <path d={svgPathsSourcing.p5e94780} fill="#B7131A" />
                   </svg>
@@ -225,8 +225,8 @@ export function SourcingPage() {
                     <path d={svgPathsSourcing.p75a7900} fill="white" />
                   </svg>
                 </div>
-                <h3 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-white text-[24px] leading-[28.8px] mb-[8px]">Browse All Markets</h3>
-                <p className="font-['Be_Vietnam_Pro',sans-serif] text-white/80 text-[14px]">Explore 50+ specialized hubs</p>
+                <h3 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-white text-[24px] leading-[28.8px] mb-[8px]">Xem tất cả chợ</h3>
+                <p className="font-['Be_Vietnam_Pro',sans-serif] text-white/80 text-[14px]">Khám phá các nguồn hàng nổi bật</p>
               </div>
             </div>
           </div>

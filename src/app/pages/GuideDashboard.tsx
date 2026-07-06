@@ -144,7 +144,7 @@ export function GuideDashboard() {
           <div className="flex items-center gap-[8px]">
             <img src={userAvatar} alt="User" className="size-[40px] rounded-full" />
             <div>
-              <div className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#1a1c1e] text-[14px]">Xin chào, Traveler</div>
+              <div className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#1a1c1e] text-[14px]">Xin chào, Thu Hà</div>
               <div className="font-['Be_Vietnam_Pro',sans-serif] font-normal text-[#5b5f61] text-[12px]">Hướng dẫn viên Vàng</div>
             </div>
           </div>
@@ -158,49 +158,49 @@ export function GuideDashboard() {
             </svg>
             <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-white text-[14px]">Dashboard</span>
           </Link>
-          <a href="#" className="rounded-[8px] px-[16px] py-[12px] flex items-center gap-[12px] mb-[4px] hover:bg-[#f3f3f6] transition-colors">
+          <Link to="/guide/dashboard" className="rounded-[8px] px-[16px] py-[12px] flex items-center gap-[12px] mb-[4px] hover:bg-[#f3f3f6] transition-colors">
             <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 16 16">
               <path d={svgPathsDashboard.pdc37d80} fill="#5B5F61" />
             </svg>
             <span className="font-['Be_Vietnam_Pro',sans-serif] font-normal text-[#5b5f61] text-[14px]">Lịch trình</span>
-          </a>
-          <a href="#" className="rounded-[8px] px-[16px] py-[12px] flex items-center gap-[12px] mb-[4px] hover:bg-[#f3f3f6] transition-colors">
+          </Link>
+          <Link to="/messages" className="rounded-[8px] px-[16px] py-[12px] flex items-center gap-[12px] mb-[4px] hover:bg-[#f3f3f6] transition-colors">
             <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 16 16">
               <path d={svgPathsDashboard.p20a8000} fill="#5B5F61" />
             </svg>
             <span className="font-['Be_Vietnam_Pro',sans-serif] font-normal text-[#5b5f61] text-[14px]">Tin nhắn</span>
-          </a>
-          <a href="#" className="rounded-[8px] px-[16px] py-[12px] flex items-center gap-[12px] mb-[4px] hover:bg-[#f3f3f6] transition-colors">
+          </Link>
+          <Link to="/revenue" className="rounded-[8px] px-[16px] py-[12px] flex items-center gap-[12px] mb-[4px] hover:bg-[#f3f3f6] transition-colors">
             <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 16 16">
               <path d={svgPathsDashboard.p43607980} fill="#5B5F61" />
             </svg>
             <span className="font-['Be_Vietnam_Pro',sans-serif] font-normal text-[#5b5f61] text-[14px]">Tài chính</span>
-          </a>
-          <a href="#" className="rounded-[8px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[#f3f3f6] transition-colors">
+          </Link>
+          <Link to="/guide-register" className="rounded-[8px] px-[16px] py-[12px] flex items-center gap-[12px] hover:bg-[#f3f3f6] transition-colors">
             <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 16 16">
               <path d={svgPathsDashboard.p2d1bb600} fill="#5B5F61" />
             </svg>
             <span className="font-['Be_Vietnam_Pro',sans-serif] font-normal text-[#5b5f61] text-[14px]">Cài đặt</span>
-          </a>
+          </Link>
         </nav>
 
         {/* Bottom Actions */}
         <div className="p-[12px] border-t border-[#e4beb9]">
           <button className="bg-[#db322f] rounded-[8px] px-[16px] py-[12px] w-full mb-[8px] font-['Be_Vietnam_Pro',sans-serif] font-semibold text-white text-[14px]">
-            Đạt hướng dẫn viên
+            Bật nhận khách
           </button>
-          <a href="#" className="flex items-center gap-[8px] px-[16px] py-[8px] hover:bg-[#f3f3f6] rounded-[8px] transition-colors">
+          <Link to="/safety" className="flex items-center gap-[8px] px-[16px] py-[8px] hover:bg-[#f3f3f6] rounded-[8px] transition-colors">
             <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 16 16">
               <path d={svgPathsDashboard.p2d1bb600} fill="#5B5F61" />
             </svg>
             <span className="font-['Be_Vietnam_Pro',sans-serif] font-normal text-[#5b5f61] text-[14px]">Trợ giúp</span>
-          </a>
-          <a href="#" className="flex items-center gap-[8px] px-[16px] py-[8px] hover:bg-[#f3f3f6] rounded-[8px] transition-colors">
+          </Link>
+          <Link to="/" className="flex items-center gap-[8px] px-[16px] py-[8px] hover:bg-[#f3f3f6] rounded-[8px] transition-colors">
             <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 16 16">
               <path d={svgPathsDashboard.p9a12a00} fill="#B7131A" />
             </svg>
             <span className="font-['Be_Vietnam_Pro',sans-serif] font-normal text-[#b7131a] text-[14px]">Đăng xuất</span>
-          </a>
+          </Link>
         </div>
       </aside>
 
@@ -267,9 +267,9 @@ export function GuideDashboard() {
             <div className="bg-[#f9f9fc] border border-[#e4beb9] rounded-[12px] p-[17px] drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)]">
               <div className="flex items-center justify-between mb-[16px]">
                 <h2 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[20px] leading-[28px]">Lịch trình sắp tới</h2>
-                <a href="#" className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#b7131a] text-[14px] tracking-[0.14px]">
+                <Link to="/guide/dashboard" className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#b7131a] text-[14px] tracking-[0.14px]">
                   Xem tất cả lịch
-                </a>
+                </Link>
               </div>
 
               {/* Timeline */}

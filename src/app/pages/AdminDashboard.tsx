@@ -7,7 +7,7 @@ const stats = [
     icon: svgPathsAdmin.pa97bc80,
     iconBg: "#FFDAD6",
     iconColor: "#B7131A",
-    label: "Total Users",
+    label: "Tổng người dùng",
     value: "24,592",
     change: "+12%",
     changeUp: true,
@@ -16,7 +16,7 @@ const stats = [
     icon: svgPathsAdmin.p46f1900,
     iconBg: "#CCE4E9",
     iconColor: "#006578",
-    label: "Active Guides",
+    label: "Guide đang hoạt động",
     value: "1,843",
     change: "+6%",
     changeUp: true,
@@ -25,7 +25,7 @@ const stats = [
     icon: svgPathsAdmin.p5c2b680,
     iconBg: "#FFDAD6",
     iconColor: "#B7131A",
-    label: "Monthly Bookings",
+    label: "Booking tháng này",
     value: "8,204",
     change: "+28%",
     changeUp: true,
@@ -34,44 +34,44 @@ const stats = [
     icon: svgPathsAdmin.p21aa9c00,
     iconBg: "#D3F1DD",
     iconColor: "#006D3A",
-    label: "Revenue (YTD)",
-    value: "$1.2M",
+    label: "Doanh thu năm",
+    value: "1.2 tỷ",
     change: "-2%",
     changeUp: false,
   },
 ];
 
 const menuItems = [
-  { icon: svgPathsAdmin.p5a0a780, label: "Dashboard", active: true },
-  { icon: svgPathsAdmin.pa97bc80, label: "Users", active: false },
-  { icon: svgPathsAdmin.p46f1900, label: "Guides", active: false },
-  { icon: svgPathsAdmin.p5c2b680, label: "Bookings", active: false },
-  { icon: svgPathsAdmin.p53fc80, label: "Payments", active: false },
-  { icon: svgPathsAdmin.p34fa700, label: "Complaints", active: false },
-  { icon: svgPathsAdmin.p11a33c00, label: "Handbook", active: false },
-  { icon: svgPathsAdmin.p7b3b600, label: "Ads", active: false },
+  { icon: svgPathsAdmin.p5a0a780, label: "Tổng quan", active: true },
+  { icon: svgPathsAdmin.pa97bc80, label: "Người dùng", active: false },
+  { icon: svgPathsAdmin.p46f1900, label: "Guide", active: false },
+  { icon: svgPathsAdmin.p5c2b680, label: "Booking", active: false },
+  { icon: svgPathsAdmin.p53fc80, label: "Thanh toán", active: false },
+  { icon: svgPathsAdmin.p34fa700, label: "Khiếu nại", active: false },
+  { icon: svgPathsAdmin.p11a33c00, label: "Cẩm nang", active: false },
+  { icon: svgPathsAdmin.p7b3b600, label: "Quảng cáo", active: false },
   { icon: svgPathsAdmin.p1c6eb780, label: "AI", active: false },
-  { icon: svgPathsAdmin.p43607980, label: "Reports", active: false },
+  { icon: svgPathsAdmin.p43607980, label: "Báo cáo", active: false },
 ];
 
 const recentBookings = [
   {
     id: "#BK-9021",
-    user: "Nguyen Van A",
-    guide: "Tran Thi B",
+    user: "Nguyễn Văn A",
+    guide: "Trần Thị B",
     destination: "Bắc Kinh",
     date: "12/10/2024",
-    status: "Confirmed",
-    amount: "$450",
+    status: "Đã xác nhận",
+    amount: "3.200.000đ",
   },
   {
     id: "#BK-9022",
-    user: "Le Hoang C",
-    guide: "Pham Van D",
+    user: "Lê Hoàng C",
+    guide: "Phạm Văn D",
     destination: "Thượng Hải",
     date: "14/10/2024",
-    status: "Pending",
-    amount: "$320",
+    status: "Chờ xử lý",
+    amount: "2.400.000đ",
   },
 ];
 
@@ -104,9 +104,9 @@ export function AdminDashboard() {
         {/* Navigation */}
         <nav className="flex-1 p-[12px] overflow-y-auto">
           {menuItems.map((item, idx) => (
-            <a
+            <Link
               key={idx}
-              href="#"
+              to="/admin"
               className={`flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] mb-[4px] transition-colors ${
                 item.active ? "bg-[#db322f] text-white" : "text-[#5b5f61] hover:bg-[#f3f3f6]"
               }`}
@@ -117,7 +117,7 @@ export function AdminDashboard() {
               <span className="font-['Be_Vietnam_Pro',sans-serif] text-[14px]" style={{ fontWeight: item.active ? 600 : 400 }}>
                 {item.label}
               </span>
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -127,22 +127,22 @@ export function AdminDashboard() {
             <img src={userAvatar} alt="Admin" className="size-[40px] rounded-full" />
             <div className="flex-1 min-w-0">
               <div className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#1a1c1e] text-[14px] truncate">Xin chào, Admin</div>
-              <div className="font-['Be_Vietnam_Pro',sans-serif] font-normal text-[#5b5f61] text-[12px]">Super Administrator</div>
+              <div className="font-['Be_Vietnam_Pro',sans-serif] font-normal text-[#5b5f61] text-[12px]">Quản trị hệ thống</div>
             </div>
           </div>
           <div className="space-y-[4px]">
-            <a href="#" className="flex items-center gap-[8px] px-[12px] py-[6px] hover:bg-[#f3f3f6] rounded-[6px] transition-colors">
+            <Link to="/safety" className="flex items-center gap-[8px] px-[12px] py-[6px] hover:bg-[#f3f3f6] rounded-[6px] transition-colors">
               <svg className="w-[14px] h-[14px]" fill="none" viewBox="0 0 14 14">
                 <path d={svgPathsAdmin.p1c6eb780} fill="#5B5F61" />
               </svg>
               <span className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[13px]">Trợ giúp</span>
-            </a>
-            <a href="#" className="flex items-center gap-[8px] px-[12px] py-[6px] hover:bg-[#f3f3f6] rounded-[6px] transition-colors">
+            </Link>
+            <Link to="/" className="flex items-center gap-[8px] px-[12px] py-[6px] hover:bg-[#f3f3f6] rounded-[6px] transition-colors">
               <svg className="w-[14px] h-[14px]" fill="none" viewBox="0 0 14 14">
                 <path d={svgPathsAdmin.p9a12a00} fill="#B7131A" />
               </svg>
               <span className="font-['Be_Vietnam_Pro',sans-serif] text-[#b7131a] text-[13px]">Đăng xuất</span>
-            </a>
+            </Link>
           </div>
         </div>
       </aside>
@@ -154,9 +154,9 @@ export function AdminDashboard() {
           <div className="flex items-center justify-between mb-[32px]">
             <div>
               <h1 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[48px] leading-[52.8px] tracking-[-0.96px] mb-[4px]">
-                Dashboard Overview
+                Tổng quan hệ thống
               </h1>
-              <p className="font-['Be_Vietnam_Pro',sans-serif] font-normal text-[#5b403d] text-[16px] leading-[25.6px]">Platform metrics and recent activities.</p>
+              <p className="font-['Be_Vietnam_Pro',sans-serif] font-normal text-[#5b403d] text-[16px] leading-[25.6px]">Chỉ số nền tảng, booking gần đây và vận hành kiểm soát chất lượng.</p>
             </div>
 
             <div className="flex items-center gap-[16px]">
@@ -164,7 +164,7 @@ export function AdminDashboard() {
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Search across platform..."
+                  placeholder="Tìm booking, guide, người dùng..."
                   className="bg-[#f9f9fc] border border-[#e2e2e5] rounded-[8px] pl-[41px] pr-[17px] py-[13px] w-[300px] font-['Be_Vietnam_Pro',sans-serif] text-[16px] text-[#1a1c1e] placeholder:text-[#6b7280] focus:outline-none focus:border-[#b7131a]"
                 />
                 <svg className="absolute left-[12px] top-1/2 -translate-y-1/2 w-[18px] h-[18px]" fill="none" viewBox="0 0 18 18">
