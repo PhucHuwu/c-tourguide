@@ -8,6 +8,7 @@ import { MapPage } from "./pages/MapPage";
 import { RevenueDashboard } from "./pages/RevenueDashboard";
 import { SourcingPage } from "./pages/SourcingPage";
 import { PublicLayout } from "./components/layout/PublicLayout";
+import { LoginPage, PartnerOnboardingPage, RegisterPage } from "./pages/AuthPages";
 import {
   assets,
   durationLabels,
@@ -408,6 +409,10 @@ function SafetyPage() {
   return <PageShell><main className="mx-auto max-w-5xl px-4 py-10 md:px-8"><h1 className="text-4xl font-bold tracking-[-0.05em]">An toàn và hỗ trợ</h1><div className="mt-6 grid gap-4 md:grid-cols-3">{["Xác minh hai chiều", "Chia sẻ vị trí chuyến đi", "SOS và hỗ trợ khẩn cấp"].map((item) => <div key={item} className="rounded-2xl bg-[#f8f3f2] p-6"><h2 className="font-bold">{item}</h2><p className="mt-2 text-sm leading-6 text-[#5b403d]">C-TourGuide ưu tiên xác minh danh tính, theo dõi hành trình và hỗ trợ kịp thời khi khách cần trợ giúp.</p></div>)}</div></main></PageShell>;
 }
 
+function UserProfilePage() {
+  return <PageShell><main className="mx-auto max-w-5xl px-4 py-10 md:px-8"><div className="rounded-3xl border border-[#ece2e0] bg-white p-6 md:p-8"><div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between"><div className="flex items-center gap-4"><div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#fff1ef] text-2xl font-bold text-[#b7131a]">MA</div><div><h1 className="text-3xl font-bold tracking-[-0.04em]">Nguyễn Minh Anh</h1><p className="mt-1 text-[#5b5f61]">Khách cá nhân · Thành viên đã xác minh email</p></div></div><Link to="/booking/CTG-000001" className="rounded-xl bg-[#b7131a] px-5 py-3 text-center font-bold text-white">Xem booking gần nhất</Link></div><div className="mt-8 grid gap-4 md:grid-cols-3">{[["Booking", "3 chuyến đã đặt"], ["Guide yêu thích", "5 hồ sơ đã lưu"], ["Thành phố quan tâm", "Quảng Châu, Thâm Quyến"]].map(([title, value]) => <div key={title} className="rounded-2xl bg-[#f8f3f2] p-5"><div className="font-bold">{title}</div><div className="mt-2 text-sm text-[#5b5f61]">{value}</div></div>)}</div></div></main></PageShell>;
+}
+
 function NotFoundPage() {
   return <PageShell><main className="mx-auto max-w-3xl px-4 py-20 text-center"><h1 className="text-4xl font-bold">Không tìm thấy trang</h1><Link to="/" className="mt-6 inline-block rounded-xl bg-[#b7131a] px-5 py-3 font-bold text-white">Về trang chủ</Link></main></PageShell>;
 }
@@ -431,6 +436,10 @@ export default function App() {
         <Route path="/ai" element={<AIAssistantPage />} />
         <Route path="/sourcing" element={<SourcingPage />} />
         <Route path="/guide-register" element={<GuideRegisterPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/partner-onboarding" element={<PartnerOnboardingPage />} />
+        <Route path="/profile" element={<UserProfilePage />} />
         <Route path="/guide/dashboard" element={<GuideDashboard />} />
         <Route path="/dashboard" element={<GuideDashboard />} />
         <Route path="/admin" element={<AdminDashboard />} />
