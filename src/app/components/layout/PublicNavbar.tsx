@@ -8,19 +8,20 @@ const publicNavItems = [
   { to: "/markets", label: "Đánh hàng" },
   { to: "/handbook", label: "Cẩm nang" },
   { to: "/map", label: "Bản đồ" },
-  { to: "/payments", label: "Thanh toán" },
 ];
 
 const roleNavItems: Record<AccountRole, { to: string; label: string }[]> = {
   traveler: [
-    { to: "/profile", label: "Tài khoản" },
     { to: "/messages", label: "Tin nhắn" },
+    { to: "/payments", label: "Thanh toán" },
   ],
   guide: [
     { to: "/guide/dashboard", label: "Khu vực guide" },
+    { to: "/payments", label: "Thanh toán" },
   ],
   merchant: [
     { to: "/partner/dashboard", label: "Khu vực đối tác" },
+    { to: "/payments", label: "Thanh toán" },
   ],
   admin: [],
 };

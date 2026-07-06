@@ -84,7 +84,6 @@ export function MapPage() {
   const [filter, setFilter] = useState<PlaceType | "all">("all");
   const [selectedTransit, setSelectedTransit] = useState<"metro" | "bus" | "taxi" | "walk">("metro");
   const [offlineDownloaded, setOfflineDownloaded] = useState(false);
-  const [mapMode, setMapMode] = useState<"google" | "china">("google");
   const filteredPlaces = useMemo(() => {
     return places.filter((place) => {
       const matchesFilter = filter === "all" || place.type === filter;
@@ -99,10 +98,11 @@ export function MapPage() {
 
   return (
     <PublicLayout>
-      <main className="mx-auto grid w-full max-w-7xl flex-1 gap-6 px-4 py-8 md:grid-cols-[340px_1fr_340px] md:px-8">
-        <aside className="rounded-3xl bg-[#f8f3f2] p-5">
-          <h1 className="text-2xl font-bold">Bản đồ Trung Quốc</h1>
-          <p className="mt-2 text-sm leading-6 text-[#5b5f61]">Bản đồ dành cho khách Việt: chợ, metro, ATM, bệnh viện và điểm tiện ích.</p>
+      <main className="mx-auto w-full max-w-7xl px-4 py-8 md:px-8">
+        <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
+        <aside className="h-fit rounded-3xl bg-[#f8f3f2] p-5 lg:sticky lg:top-28">
+          <h2 className="text-xl font-bold">Tìm kiếm địa điểm</h2>
+          <p className="mt-2 text-sm leading-6 text-[#5b5f61]">Chọn nhanh theo nhóm tiện ích hoặc nhập tên địa điểm.</p>
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
@@ -116,7 +116,7 @@ export function MapPage() {
               </button>
             ))}
           </div>
-          <div className="mt-5 space-y-3">
+          <div className="mt-5 max-h-[390px] space-y-3 overflow-y-auto pr-1">
             {filteredPlaces.length ? filteredPlaces.map((place) => (
               <button key={place.id} onClick={() => setSelectedId(place.id)} className={`w-full rounded-2xl p-4 text-left shadow-sm ${selectedPlace.id === place.id ? "bg-[#fff1ef] ring-2 ring-[#b7131a]" : "bg-white"}`}>
                 <div className="font-bold">{place.name}</div>
@@ -137,29 +137,23 @@ export function MapPage() {
           </div>
         </aside>
 
-        <section className="relative min-h-[560px] overflow-hidden rounded-3xl border border-[#ece2e0] bg-[#e8e8ec] shadow-sm">
-          {mapMode === "google" ? <iframe key={selectedPlace.id} title={`Google Maps - ${selectedPlace.name}`} src={mapSrc} className="h-full min-h-[560px] w-full border-0" loading="lazy" allowFullScreen referrerPolicy="no-referrer-when-downgrade" /> : <div className="flex h-full min-h-[560px] flex-col justify-between bg-[#dfeff2] p-6"><div><div className="rounded-3xl bg-white/90 p-5 shadow-xl"><h2 className="text-2xl font-bold">Bản đồ nội địa Trung Quốc</h2><p className="mt-2 text-sm text-[#5b5f61]">Chế độ mô phỏng Baidu/Amap: ưu tiên tên địa điểm tiếng Trung, ga metro, chợ đầu mối và chỉ dẫn taxi.</p></div></div><div className="mx-auto rounded-full bg-[#b7131a] px-5 py-3 font-bold text-white shadow-xl">{selectedPlace.name}</div><div className="grid gap-3 md:grid-cols-3">{["Metro gần nhất", "Gọi taxi", "Lưu offline"].map((item) => <div key={item} className="rounded-2xl bg-white/90 p-4 font-bold text-[#006578] shadow">{item}</div>)}</div></div>}
-          <div className="absolute left-5 top-5 rounded-2xl bg-white/95 p-4 shadow-lg">
-            <div className="text-sm font-bold">{selectedPlace.name}</div>
-            <div className="mt-1 text-xs text-[#5b5f61]">Đang xem trên Google Maps.</div>
-            <div className="mt-3 flex gap-2"><button onClick={() => setMapMode("google")} className={`rounded-lg px-3 py-2 text-xs font-bold ${mapMode === "google" ? "bg-[#b7131a] text-white" : "bg-[#f2f2f4]"}`}>Google</button><button onClick={() => setMapMode("china")} className={`rounded-lg px-3 py-2 text-xs font-bold ${mapMode === "china" ? "bg-[#006578] text-white" : "bg-[#f2f2f4]"}`}>Nội địa</button></div>
-            <a href={directionsSrc} target="_blank" rel="noreferrer" className="mt-3 inline-block rounded-xl bg-[#b7131a] px-4 py-2 text-xs font-bold text-white">
-              Mở chỉ đường
-            </a>
+        <section className="min-w-0 space-y-5">
+          <div className="relative min-h-[480px] overflow-hidden rounded-3xl border border-[#ece2e0] bg-[#e8e8ec] shadow-sm md:min-h-[680px]">
+            <iframe key={selectedPlace.id} title={`Bản đồ - ${selectedPlace.name}`} src={mapSrc} className="h-full min-h-[480px] w-full border-0 md:min-h-[680px]" loading="lazy" allowFullScreen referrerPolicy="no-referrer-when-downgrade" />
+            <div className="absolute left-4 right-4 top-4 rounded-2xl bg-white/95 p-4 shadow-lg backdrop-blur md:left-auto md:right-5 md:max-w-sm">
+              <div className="text-sm font-bold">{selectedPlace.name}</div>
+              <div className="mt-1 text-xs text-[#5b5f61]">Bản đồ tích hợp cho khách Việt tại Trung Quốc.</div>
+              <a href={directionsSrc} target="_blank" rel="noreferrer" className="mt-3 inline-block rounded-xl bg-[#b7131a] px-4 py-2 text-xs font-bold text-white">Mở chỉ đường</a>
+            </div>
           </div>
-        </section>
 
-        <aside className="rounded-3xl border border-[#ece2e0] bg-white p-5 shadow-sm">
-          <img src={selectedPlace.image} alt={selectedPlace.name} className="h-44 w-full rounded-2xl object-cover" />
-          <h2 className="mt-5 text-2xl font-bold">{selectedPlace.name}</h2>
-          <p className="mt-1 text-sm text-[#5b5f61]">{selectedPlace.district}</p>
-          <div className="mt-5 space-y-3 text-sm">
-            <div className="rounded-2xl bg-[#f8f3f2] p-4"><b>Ga gần nhất</b><p className="mt-1 text-[#5b403d]">{selectedPlace.metro}</p></div>
-            <div className="rounded-2xl bg-[#f8f3f2] p-4"><b>Giờ hoạt động</b><p className="mt-1 text-[#5b403d]">{selectedPlace.hours}</p></div>
-            <div className="rounded-2xl bg-[#f8f3f2] p-4"><b>Lưu ý</b><p className="mt-1 leading-6 text-[#5b403d]">{selectedPlace.note}</p></div>
-          </div>
-          <div className="mt-5">
-            <h3 className="font-bold">Chỉ đường</h3>
+          <div className="grid gap-5 rounded-3xl border border-[#ece2e0] bg-white p-5 shadow-sm xl:grid-cols-[260px_1fr]">
+            <img src={selectedPlace.image} alt={selectedPlace.name} className="h-48 w-full rounded-2xl object-cover xl:h-full" />
+            <div>
+              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between"><div><h2 className="text-2xl font-bold">{selectedPlace.name}</h2><p className="mt-1 text-sm text-[#5b5f61]">{selectedPlace.district}</p></div><a href={directionsSrc} target="_blank" rel="noreferrer" className="w-fit rounded-xl bg-[#b7131a] px-4 py-3 text-center font-bold text-white">Mở Google Maps</a></div>
+              <div className="mt-5 grid gap-3 text-sm md:grid-cols-3"><div className="rounded-2xl bg-[#f8f3f2] p-4"><b>Ga gần nhất</b><p className="mt-1 text-[#5b403d]">{selectedPlace.metro}</p></div><div className="rounded-2xl bg-[#f8f3f2] p-4"><b>Giờ hoạt động</b><p className="mt-1 text-[#5b403d]">{selectedPlace.hours}</p></div><div className="rounded-2xl bg-[#f8f3f2] p-4"><b>Lưu ý</b><p className="mt-1 leading-6 text-[#5b403d]">{selectedPlace.note}</p></div></div>
+              <div className="mt-5">
+                <h3 className="font-bold">Chỉ đường</h3>
             <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
               {[
                 ["metro", "Metro"],
@@ -178,11 +172,11 @@ export function MapPage() {
               {selectedTransit === "taxi" && "Gợi ý: dùng địa chỉ tiếng Trung từ guide, xác nhận cổng vào trước khi xuống xe."}
               {selectedTransit === "walk" && "Gợi ý: chỉ nên đi bộ nếu bạn đang ở khu chợ lân cận và không mang kiện hàng lớn."}
             </div>
-            <a href={directionsSrc} target="_blank" rel="noreferrer" className="mt-3 block rounded-xl bg-[#b7131a] px-4 py-3 text-center font-bold text-white">
-              Mở Google Maps
-            </a>
+              </div>
+            </div>
           </div>
-        </aside>
+        </section>
+        </div>
       </main>
     </PublicLayout>
   );
