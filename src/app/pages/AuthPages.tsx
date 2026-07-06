@@ -30,10 +30,15 @@ export function LoginPage() {
   const [email, setEmail] = useState("minhanh@example.com");
   const [password, setPassword] = useState("12345678");
 
+  function saveSession(session: { email: string; name: string; role: "traveler" | "guide" | "merchant" }) {
+    window.localStorage.setItem("ctourguide.session", JSON.stringify(session));
+    window.dispatchEvent(new Event("ctourguide:session"));
+    navigate(session.role === "guide" ? "/dashboard" : session.role === "merchant" ? "/partner-onboarding" : "/guides");
+  }
+
   function submit(event: FormEvent) {
     event.preventDefault();
-    window.localStorage.setItem("ctourguide.session", JSON.stringify({ email, name: "Nguyễn Minh Anh", role: "traveler" }));
-    navigate("/guides");
+    saveSession({ email, name: "Nguyễn Minh Anh", role: "traveler" });
   }
 
   return (
@@ -68,6 +73,14 @@ export function LoginPage() {
             <Link to="/register" className="font-semibold text-[#b7131a]">Tạo tài khoản</Link>
           </div>
           <button className="mt-6 w-full rounded-xl bg-[#b7131a] px-5 py-3 font-bold text-white hover:bg-[#9f1016]">Đăng nhập</button>
+          <div className="mt-6 rounded-2xl bg-[#f8f3f2] p-4">
+            <div className="text-sm font-bold text-[#1a1c1e]">Đăng nhập nhanh</div>
+            <div className="mt-3 grid gap-2 md:grid-cols-3">
+              <button type="button" onClick={() => saveSession({ email: "khach@example.com", name: "Nguyễn Minh Anh", role: "traveler" })} className="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-[#5b403d] hover:bg-[#fff1ef]">Khách cá nhân</button>
+              <button type="button" onClick={() => saveSession({ email: "guide@example.com", name: "Phạm Khánh Linh", role: "guide" })} className="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-[#5b403d] hover:bg-[#fff1ef]">Local Guide</button>
+              <button type="button" onClick={() => saveSession({ email: "partner@example.com", name: "China Logistics Hub", role: "merchant" })} className="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-[#5b403d] hover:bg-[#fff1ef]">Đối tác</button>
+            </div>
+          </div>
         </form>
       </main>
     </PublicLayout>
