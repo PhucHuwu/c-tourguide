@@ -9,6 +9,11 @@ type AiMessage = {
   text: string;
 };
 
+type MarkdownMessageProps = {
+  text: string;
+  inverted?: boolean;
+};
+
 const suggestions = [
   "Quét thực đơn",
   "Dịch biển báo này",
@@ -16,6 +21,108 @@ const suggestions = [
   "Cảnh báo lừa đảo khi đi chợ",
   "Gợi ý lịch trình 1 ngày ở Quảng Châu",
 ];
+
+function renderInlineMarkdown(text: string, inverted = false) {
+  const nodes: React.ReactNode[] = [];
+  const pattern = /(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\))/g;
+  let lastIndex = 0;
+
+  for (const match of text.matchAll(pattern)) {
+    if (match.index === undefined) continue;
+    if (match.index > lastIndex) nodes.push(text.slice(lastIndex, match.index));
+
+    const token = match[0];
+    if (token.startsWith("**")) {
+      nodes.push(<strong key={`${token}-${match.index}`}>{token.slice(2, -2)}</strong>);
+    } else if (token.startsWith("`")) {
+      nodes.push(<code key={`${token}-${match.index}`} className={`rounded px-1.5 py-0.5 text-[0.92em] ${inverted ? "bg-white/20 text-white" : "bg-white text-[#b7131a] ring-1 ring-[#f0d8d5]"}`}>{token.slice(1, -1)}</code>);
+    } else {
+      const label = token.match(/^\[([^\]]+)\]/)?.[1] ?? token;
+      const href = token.match(/\(([^)]+)\)$/)?.[1] ?? "#";
+      nodes.push(<a key={`${token}-${match.index}`} href={href} target="_blank" rel="noreferrer" className={`font-bold underline underline-offset-4 ${inverted ? "text-white" : "text-[#b7131a]"}`}>{label}</a>);
+    }
+
+    lastIndex = match.index + token.length;
+  }
+
+  if (lastIndex < text.length) nodes.push(text.slice(lastIndex));
+  return nodes.length ? nodes : text;
+}
+
+function MarkdownMessage({ text, inverted = false }: MarkdownMessageProps) {
+  const lines = text.split("\n");
+  const blocks: React.ReactNode[] = [];
+  let listItems: string[] = [];
+  let orderedItems: string[] = [];
+  let codeLines: string[] = [];
+  let inCodeBlock = false;
+
+  const flushList = () => {
+    if (listItems.length) {
+      blocks.push(<ul key={`ul-${blocks.length}`} className="my-2 list-disc space-y-1 pl-5">{listItems.map((item, index) => <li key={`${item}-${index}`}>{renderInlineMarkdown(item, inverted)}</li>)}</ul>);
+      listItems = [];
+    }
+    if (orderedItems.length) {
+      blocks.push(<ol key={`ol-${blocks.length}`} className="my-2 list-decimal space-y-1 pl-5">{orderedItems.map((item, index) => <li key={`${item}-${index}`}>{renderInlineMarkdown(item, inverted)}</li>)}</ol>);
+      orderedItems = [];
+    }
+  };
+
+  const flushCode = () => {
+    if (!codeLines.length) return;
+    blocks.push(<pre key={`code-${blocks.length}`} className={`my-3 overflow-x-auto rounded-2xl p-4 text-sm leading-6 ${inverted ? "bg-white/15 text-white" : "bg-[#1a1c1e] text-white"}`}><code>{codeLines.join("\n")}</code></pre>);
+    codeLines = [];
+  };
+
+  lines.forEach((line) => {
+    if (line.trim().startsWith("```")) {
+      if (inCodeBlock) flushCode();
+      else flushList();
+      inCodeBlock = !inCodeBlock;
+      return;
+    }
+
+    if (inCodeBlock) {
+      codeLines.push(line);
+      return;
+    }
+
+    const trimmed = line.trim();
+    if (!trimmed) {
+      flushList();
+      return;
+    }
+
+    const heading = trimmed.match(/^(#{1,3})\s+(.+)$/);
+    if (heading) {
+      flushList();
+      const Tag = heading[1].length === 1 ? "h3" : heading[1].length === 2 ? "h4" : "h5";
+      blocks.push(<Tag key={`h-${blocks.length}`} className="mb-2 mt-3 font-bold tracking-[-0.02em]">{renderInlineMarkdown(heading[2], inverted)}</Tag>);
+      return;
+    }
+
+    const bullet = trimmed.match(/^[-*]\s+(.+)$/);
+    if (bullet) {
+      orderedItems = [];
+      listItems.push(bullet[1]);
+      return;
+    }
+
+    const ordered = trimmed.match(/^\d+[.)]\s+(.+)$/);
+    if (ordered) {
+      listItems = [];
+      orderedItems.push(ordered[1]);
+      return;
+    }
+
+    flushList();
+    blocks.push(<p key={`p-${blocks.length}`} className="my-2 first:mt-0 last:mb-0">{renderInlineMarkdown(trimmed, inverted)}</p>);
+  });
+
+  flushList();
+  flushCode();
+  return <div className="markdown-message text-sm leading-7 md:text-base">{blocks}</div>;
+}
 
 export function AIAssistantPage() {
   const [session] = useState(() => getSession());
@@ -107,8 +214,8 @@ export function AIAssistantPage() {
           <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5">
             {messages.map((message) => (
               <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[82%] rounded-2xl px-4 py-3 leading-7 ${message.role === "user" ? "bg-[#b7131a] text-white" : "bg-[#f2f2f4] text-[#1a1c1e]"}`}>
-                  {message.text}
+                <div className={`max-w-[82%] rounded-2xl px-4 py-3 ${message.role === "user" ? "bg-[#b7131a] text-white" : "bg-[#f2f2f4] text-[#1a1c1e]"}`}>
+                  <MarkdownMessage text={message.text} inverted={message.role === "user"} />
                 </div>
               </div>
             ))}
