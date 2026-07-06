@@ -57,8 +57,8 @@ export function AIAssistantPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fffdfc] font-['Be_Vietnam_Pro',sans-serif] text-[#1a1c1e]">
-      <header className="border-b border-[#f0d8d5] bg-white px-4 py-4 md:px-8">
+    <div className="flex min-h-screen flex-col bg-[#fffdfc] font-['Be_Vietnam_Pro',sans-serif] text-[#1a1c1e]">
+      <header className="sticky top-0 z-50 border-b border-[#f0d8d5] bg-white/95 px-4 py-4 backdrop-blur md:px-8">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
           <Link to="/" className="text-2xl font-bold text-[#b7131a]">C-TourGuide</Link>
           <nav className="hidden gap-6 text-sm font-semibold text-[#5b5f61] md:flex">
@@ -71,7 +71,7 @@ export function AIAssistantPage() {
         </div>
       </header>
 
-      <main className="mx-auto grid max-w-7xl gap-6 px-4 py-8 md:grid-cols-[320px_1fr] md:px-8">
+      <main className="mx-auto grid w-full max-w-7xl flex-1 gap-6 px-4 py-8 md:grid-cols-[320px_1fr] md:px-8">
         <aside className="h-fit rounded-3xl bg-[#f8f3f2] p-5">
           <h1 className="text-2xl font-bold">Trợ lý AI</h1>
           <p className="mt-2 text-sm leading-6 text-[#5b5f61]">Mock assistant cho các tình huống người Việt thường gặp khi đi Trung Quốc.</p>
@@ -122,6 +122,19 @@ export function AIAssistantPage() {
           </div>
         </section>
       </main>
+      <footer className="mt-auto border-t border-[#f0d8d5] bg-[#f8f3f2]">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 md:flex-row md:items-center md:justify-between md:px-8">
+          <div>
+            <div className="text-xl font-bold text-[#b7131a]">C-TourGuide</div>
+            <p className="mt-1 text-sm text-[#5b5f61]">Trợ lý AI demo hỗ trợ khách Việt tại Trung Quốc.</p>
+          </div>
+          <div className="flex flex-wrap gap-4 text-sm text-[#5b5f61]">
+            <Link to="/guides">Tìm guide</Link>
+            <Link to="/markets">Đánh hàng</Link>
+            <Link to="/safety">An toàn</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

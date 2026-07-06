@@ -148,8 +148,8 @@ export function AdminDashboard() {
       </aside>
 
       {/* ── Main Content ── */}
-      <main className="flex-1 overflow-y-auto">
-        <div className="p-[40px]">
+      <main className="flex-1 overflow-y-auto flex flex-col">
+        <div className="p-[40px] flex-1">
           {/* Header */}
           <div className="flex items-center justify-between mb-[32px]">
             <div>
@@ -286,7 +286,7 @@ export function AdminDashboard() {
 
             {/* User Demographics */}
             <div className="bg-white border border-[#e2e2e5] rounded-[12px] p-[24px] drop-shadow-[0px_1px_2px_rgba(0,0,0,0.05)]">
-              <h2 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[24px] leading-[28px] mb-[24px]">User Demographics</h2>
+              <h2 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[24px] leading-[28px] mb-[24px]">Phân bổ người dùng</h2>
 
               {/* Donut Chart Placeholder */}
               <div className="flex items-center justify-center h-[200px] mb-[16px]">
@@ -299,7 +299,7 @@ export function AdminDashboard() {
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <div className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#1a1c1e] text-[24px]">8,450</div>
-                    <div className="font-['Be_Vietnam_Pro',sans-serif] font-normal text-[#5b5f61] text-[12px]">Total Users</div>
+                    <div className="font-['Be_Vietnam_Pro',sans-serif] font-normal text-[#5b5f61] text-[12px]">Tổng người dùng</div>
                   </div>
                 </div>
               </div>
@@ -326,19 +326,19 @@ export function AdminDashboard() {
           {/* Recent Bookings Table */}
           <div className="bg-white border border-[#e2e2e5] rounded-[12px] p-[24px] drop-shadow-[0px_1px_2px_rgba(0,0,0,0.05)]">
             <div className="flex items-center justify-between mb-[24px]">
-              <h2 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[24px] leading-[28px]">Recent Bookings</h2>
+              <h2 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[24px] leading-[28px]">Booking gần đây</h2>
               <div className="flex gap-[12px]">
                 <button className="flex items-center gap-[8px] px-[16px] py-[8px] border border-[#e2e2e5] rounded-[8px] hover:bg-[#f3f3f6] transition-colors">
                   <svg className="w-[14px] h-[14px]" fill="none" viewBox="0 0 14 14">
                     <path d={svgPathsAdmin.p78f3700} fill="#5B5F61" />
                   </svg>
-                  <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#1a1c1e] text-[14px]">Filter</span>
+                  <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#1a1c1e] text-[14px]">Lọc</span>
                 </button>
                 <button className="flex items-center gap-[8px] px-[16px] py-[8px] bg-[#db322f] rounded-[8px] hover:bg-[#b7131a] transition-colors">
                   <svg className="w-[14px] h-[14px]" fill="none" viewBox="0 0 14 14">
                     <path d={svgPathsAdmin.p358da480} fill="white" />
                   </svg>
-                  <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-white text-[14px]">Export</span>
+                  <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-white text-[14px]">Xuất file</span>
                 </button>
               </div>
             </div>
@@ -348,7 +348,7 @@ export function AdminDashboard() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-[#e2e2e5]">
-                    {["Booking ID", "User", "Guide", "Destination", "Date", "Status", "Amount", "Actions"].map((header) => (
+                    {["Mã booking", "Khách", "Guide", "Điểm đến", "Ngày", "Trạng thái", "Số tiền", "Thao tác"].map((header) => (
                       <th key={header} className="text-left px-[16px] py-[12px] font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[12px] uppercase tracking-[0.5px]">
                         {header}
                       </th>
@@ -373,7 +373,7 @@ export function AdminDashboard() {
                       <td className="px-[16px] py-[16px]">
                         <span
                           className={`inline-flex px-[12px] py-[4px] rounded-full font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[12px] ${
-                            booking.status === "Confirmed" ? "bg-[#D3F1DD] text-[#006D3A]" : "bg-[#FFE5B4] text-[#8B6914]"
+                            booking.status === "Đã xác nhận" ? "bg-[#D3F1DD] text-[#006D3A]" : "bg-[#FFE5B4] text-[#8B6914]"
                           }`}
                         >
                           {booking.status}
@@ -396,6 +396,15 @@ export function AdminDashboard() {
             </div>
           </div>
         </div>
+        <footer className="mt-auto border-t border-[#e2e2e5] bg-white px-[40px] py-[24px]">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <div className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#b7131a] text-[18px]">C-TourGuide Admin</div>
+              <div className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[12px]">Demo quản trị chất lượng, booking, guide và báo cáo vận hành.</div>
+            </div>
+            <Link to="/" className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#b7131a] text-[14px]">Về trang chủ</Link>
+          </div>
+        </footer>
       </main>
     </div>
   );

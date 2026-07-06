@@ -240,9 +240,9 @@ export function SourcingPage() {
             <div className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#b7131a] text-[24px] tracking-[-0.48px]">C-TourGuide</div>
             <div className="flex gap-[32px]">
               {["Terms of Service", "Privacy Policy", "Contact Support", "Sitemap"].map((link) => (
-                <a key={link} href="#" className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[14px] hover:text-[#b7131a] transition-colors">
+                <Link key={link} to="/safety" className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[14px] hover:text-[#b7131a] transition-colors">
                   {link}
-                </a>
+                </Link>
               ))}
             </div>
           </div>

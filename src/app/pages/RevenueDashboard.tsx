@@ -94,7 +94,7 @@ export function RevenueDashboard() {
             <span className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b403d] text-[14px] tracking-[0.14px]">Lịch làm việc</span>
           </Link>
 
-          {/* Active: Earnings */}
+          {/* Active: Thu nhập */}
           <div className="bg-[#ffdad6] flex items-center gap-[12px] p-[12px] rounded-[8px] mb-[4px]">
             <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 18 18">
               <path d={svgPaths.p1ce44900} fill="#B7131A" />
@@ -103,7 +103,7 @@ export function RevenueDashboard() {
           </div>
         </nav>
 
-        {/* Settings */}
+        {/* Cài đặt */}
         <div className="p-[12px] border-t border-[#e2e2e5]">
           <button className="flex items-center gap-[12px] p-[12px] rounded-[8px] hover:bg-[#f3f3f6] transition-colors w-full">
             <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 18 18">
@@ -115,8 +115,8 @@ export function RevenueDashboard() {
       </aside>
 
       {/* ── Main Content ── */}
-      <main className="flex-1 overflow-auto">
-        <div className="max-w-[1200px] mx-auto p-[40px]">
+      <main className="flex-1 overflow-auto flex flex-col">
+        <div className="max-w-[1200px] mx-auto p-[40px] flex-1 w-full">
           {/* Header */}
           <div className="mb-[40px]">
             <div className="flex items-start justify-between mb-[8px]">
@@ -147,7 +147,7 @@ export function RevenueDashboard() {
             {/* Total Revenue */}
             <div className="bg-white border border-[#e2e2e5] rounded-[12px] p-[24px]">
               <div className="flex items-start justify-between mb-[16px]">
-                <div className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px]">Total Revenue</div>
+                <div className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px]">Tổng doanh thu</div>
                 <div className="bg-[#ffdad6] rounded-[8px] p-[8px]">
                   <svg className="w-[20px] h-[20px]" fill="none" viewBox="0 0 20 20">
                     <path d={svgPaths.p1bf34e84} fill="#B7131A" />
@@ -159,14 +159,14 @@ export function RevenueDashboard() {
                 <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 16 16">
                   <path d={svgPaths.p1a03fe00} fill="#198754" />
                 </svg>
-                <span className="font-['Be_Vietnam_Pro',sans-serif] text-[#198754] text-[12px]">+12.5% from last month</span>
+                <span className="font-['Be_Vietnam_Pro',sans-serif] text-[#198754] text-[12px]">+12.5% so với tháng trước</span>
               </div>
             </div>
 
             {/* Commissions */}
             <div className="bg-white border border-[#e2e2e5] rounded-[12px] p-[24px]">
               <div className="flex items-start justify-between mb-[16px]">
-                <div className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px]">Commissions (10%)</div>
+                <div className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px]">Hoa hồng (10%)</div>
                 <div className="bg-[#ffdad6] rounded-[8px] p-[8px]">
                   <svg className="w-[20px] h-[20px]" fill="none" viewBox="0 0 20 20">
                     <path d={svgPaths.p3aad5c80} fill="#B7131A" />
@@ -178,14 +178,14 @@ export function RevenueDashboard() {
                 <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 16 16">
                   <path d={svgPaths.p1a03fe00} fill="#198754" />
                 </svg>
-                <span className="font-['Be_Vietnam_Pro',sans-serif] text-[#198754] text-[12px]">+8.2% from last month</span>
+                <span className="font-['Be_Vietnam_Pro',sans-serif] text-[#198754] text-[12px]">+8.2% so với tháng trước</span>
               </div>
             </div>
 
             {/* Premium Memberships */}
             <div className="bg-white border border-[#e2e2e5] rounded-[12px] p-[24px]">
               <div className="flex items-start justify-between mb-[16px]">
-                <div className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px]">Premium Memberships</div>
+                <div className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px]">Gói Premium</div>
                 <div className="bg-[#ffdad6] rounded-[8px] p-[8px]">
                   <svg className="w-[20px] h-[20px]" fill="none" viewBox="0 0 20 20">
                     <path d={svgPaths.p14fdd300} fill="#B7131A" />
@@ -197,14 +197,14 @@ export function RevenueDashboard() {
                 <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 16 16">
                   <path d={svgPaths.p1cf7e780} fill="#DC3545" />
                 </svg>
-                <span className="font-['Be_Vietnam_Pro',sans-serif] text-[#DC3545] text-[12px]">+0.5% from last month</span>
+                <span className="font-['Be_Vietnam_Pro',sans-serif] text-[#DC3545] text-[12px]">+0.5% so với tháng trước</span>
               </div>
             </div>
 
             {/* Platform Fees */}
             <div className="bg-white border border-[#e2e2e5] rounded-[12px] p-[24px]">
               <div className="flex items-start justify-between mb-[16px]">
-                <div className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px]">Platform Fees</div>
+                <div className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px]">Phí nền tảng</div>
                 <div className="bg-[#ffdad6] rounded-[8px] p-[8px]">
                   <svg className="w-[20px] h-[20px]" fill="none" viewBox="0 0 20 20">
                     <path d={svgPaths.p27ee7480} fill="#B7131A" />
@@ -216,7 +216,7 @@ export function RevenueDashboard() {
                 <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 16 16">
                   <path d={svgPaths.p1a03fe00} fill="#198754" />
                 </svg>
-                <span className="font-['Be_Vietnam_Pro',sans-serif] text-[#198754] text-[12px]">+3.1% from last month</span>
+                <span className="font-['Be_Vietnam_Pro',sans-serif] text-[#198754] text-[12px]">+3.1% so với tháng trước</span>
               </div>
             </div>
           </div>
@@ -225,7 +225,7 @@ export function RevenueDashboard() {
           <div className="grid grid-cols-[1.5fr_1fr] gap-[24px] mb-[32px]">
             {/* Revenue Growth Chart */}
             <div className="bg-white border border-[#e2e2e5] rounded-[12px] p-[24px]">
-              <h3 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[20px] mb-[24px]">Revenue Growth</h3>
+              <h3 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[20px] mb-[24px]">Tăng trưởng doanh thu</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <AreaChart data={revenueData}>
                   <defs>
@@ -252,7 +252,7 @@ export function RevenueDashboard() {
 
             {/* Revenue Sources Chart */}
             <div className="bg-white border border-[#e2e2e5] rounded-[12px] p-[24px]">
-              <h3 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[20px] mb-[24px]">Revenue Sources</h3>
+              <h3 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[20px] mb-[24px]">Nguồn doanh thu</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie data={sourcesData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" paddingAngle={0}>
@@ -275,21 +275,21 @@ export function RevenueDashboard() {
             </div>
           </div>
 
-          {/* Recent Earnings Table */}
+          {/* Bảng thu nhập gần đây */}
           <div className="bg-white border border-[#e2e2e5] rounded-[12px] p-[24px]">
             <div className="flex items-center justify-between mb-[24px]">
-              <h3 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[20px]">Recent Earnings</h3>
-              <button className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#b7131a] text-[14px] hover:underline">View All</button>
+              <h3 className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#1a1c1e] text-[20px]">Thu nhập gần đây</h3>
+              <button className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#b7131a] text-[14px] hover:underline">Xem tất cả</button>
             </div>
 
             <table className="w-full">
               <thead>
                 <tr className="border-b border-[#e2e2e5]">
-                  <th className="pb-[12px] text-left font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px]">Booking ID / User</th>
-                  <th className="pb-[12px] text-left font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px]">Service Type</th>
-                  <th className="pb-[12px] text-left font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px]">Commission</th>
-                  <th className="pb-[12px] text-left font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px]">Status</th>
-                  <th className="pb-[12px] text-left font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px]">Date</th>
+                  <th className="pb-[12px] text-left font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px]">Booking / Khách</th>
+                  <th className="pb-[12px] text-left font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px]">Dịch vụ</th>
+                  <th className="pb-[12px] text-left font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px]">Hoa hồng</th>
+                  <th className="pb-[12px] text-left font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px]">Trạng thái</th>
+                  <th className="pb-[12px] text-left font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#5b5f61] text-[14px]">Ngày</th>
                 </tr>
               </thead>
               <tbody>
@@ -315,7 +315,7 @@ export function RevenueDashboard() {
                     <td className="py-[16px]">
                       <span
                         className={`px-[12px] py-[4px] rounded-full font-['Be_Vietnam_Pro',sans-serif] text-[12px] ${
-                          earning.status === "Completed" ? "bg-[#d1f4e0] text-[#198754]" : "bg-[#f3f3f6] text-[#5b5f61]"
+                          earning.status === "Hoàn thành" ? "bg-[#d1f4e0] text-[#198754]" : "bg-[#f3f3f6] text-[#5b5f61]"
                         }`}
                       >
                         {earning.status}
@@ -328,6 +328,15 @@ export function RevenueDashboard() {
             </table>
           </div>
         </div>
+        <footer className="mt-auto border-t border-[#e2e2e5] bg-white px-[40px] py-[24px]">
+          <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 flex-wrap">
+            <div>
+              <div className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#b7131a] text-[18px]">C-TourGuide Revenue</div>
+              <div className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[12px]">Dashboard demo theo dõi hoa hồng và hiệu suất doanh thu.</div>
+            </div>
+            <Link to="/" className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#b7131a] text-[14px]">Về trang chủ</Link>
+          </div>
+        </footer>
       </main>
     </div>
   );

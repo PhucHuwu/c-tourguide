@@ -205,8 +205,8 @@ export function GuideDashboard() {
       </aside>
 
       {/* ── Main Content ── */}
-      <main className="flex-1 overflow-y-auto">
-        <div className="p-[40px]">
+      <main className="flex-1 overflow-y-auto flex flex-col">
+        <div className="p-[40px] flex-1">
           {/* Page Header */}
           <div className="flex items-end justify-between mb-[32px]">
             <div>
@@ -451,6 +451,15 @@ export function GuideDashboard() {
             </div>
           </div>
         </div>
+        <footer className="mt-auto border-t border-[#e4beb9] bg-white px-[40px] py-[24px]">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <div className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#b7131a] text-[18px]">C-TourGuide</div>
+              <div className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[12px]">Dashboard guide demo · quản lý booking, lịch làm việc và thu nhập.</div>
+            </div>
+            <Link to="/" className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#b7131a] text-[14px]">Về trang chủ</Link>
+          </div>
+        </footer>
       </main>
     </div>
   );
