@@ -49,6 +49,21 @@ export type Booking = {
   createdAt: string;
 };
 
+export type GuideReview = {
+  id: string;
+  bookingId: string;
+  guideId: string;
+  travelerName: string;
+  rating: number;
+  punctuality: number;
+  communication: number;
+  expertise: number;
+  support: number;
+  comment: string;
+  wouldRecommend: boolean;
+  createdAt: string;
+};
+
 export type Message = {
   id: string;
   author: "traveler" | "guide" | "system";
@@ -364,6 +379,46 @@ export const handbookArticles = [
     topic: "Ẩm thực",
     image: heroImage,
     summary: "Danh sách món dễ ăn hơn, câu tiếng Trung cần biết khi gọi món và lưu ý mức cay Tứ Xuyên.",
+  },
+  {
+    id: "guangzhou-vietnamese-food",
+    city: "Quảng Châu",
+    title: "Nhà hàng Việt và quán ăn dễ gọi món ở Quảng Châu",
+    topic: "Ẩm thực",
+    image: heroImage,
+    summary: "Gợi ý khu vực có món dễ ăn, cách hỏi mức cay, món phù hợp sau một ngày đi chợ đầu mối.",
+  },
+  {
+    id: "guangzhou-hotels-malls",
+    city: "Quảng Châu",
+    title: "Khách sạn và trung tâm thương mại tiện cho dân buôn",
+    topic: "Lưu trú",
+    image: marketImage,
+    summary: "Nên ở gần ga nào, khu nào tiện đi Bạch Mã, Sha He, Beijing Road và gửi hàng về kho.",
+  },
+  {
+    id: "phoenix-scam-alerts",
+    city: "Phượng Hoàng Cổ Trấn",
+    title: "Cảnh báo lừa đảo và dịch vụ mời chào quá giá",
+    topic: "An toàn",
+    image: galleryLarge,
+    summary: "Các tình huống thường gặp quanh vé tham quan, chụp ảnh, thuyền, quán ăn và cách hỏi giá trước khi dùng dịch vụ.",
+  },
+  {
+    id: "china-train-ticket",
+    city: "Toàn Trung Quốc",
+    title: "Mua vé tàu và vé tham quan tại Trung Quốc",
+    topic: "Vé tham quan",
+    image: metroImage,
+    summary: "Chuẩn bị hộ chiếu, tên tiếng Anh, giờ tàu, chính sách đổi vé và lưu ý khi nhờ đối tác hỗ trợ thanh toán.",
+  },
+  {
+    id: "customs-declaration",
+    city: "Quảng Châu",
+    title: "Khai báo hàng hóa và lưu ý vận chuyển về Việt Nam",
+    topic: "Logistics",
+    image: marketImage,
+    summary: "Checklist thông tin kiện hàng, hóa đơn, mô tả hàng hóa, lưu ý hàng dễ vỡ, mỹ phẩm, linh kiện và đồ trẻ em.",
   },
 ];
 

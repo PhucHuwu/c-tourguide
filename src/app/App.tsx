@@ -37,10 +37,11 @@ import {
   serviceLabels,
   type Booking,
   type BookingStatus,
+  type GuideReview,
   type Message,
   type ServiceType,
 } from "./data/mock";
-import { formatVnd, getBooking, getBookings, getMessages, saveBooking, saveMessages, updateBookingStatus } from "./lib/storage";
+import { formatVnd, getBooking, getBookings, getMessages, getReviewForBooking, getReviewsForGuide, saveBooking, saveMessages, saveReview, updateBookingStatus } from "./lib/storage";
 
 function PageShell({ children }: { children: ReactNode }) {
   return <PublicLayout>{children}</PublicLayout>;
@@ -309,23 +310,36 @@ function GuideSearchPage() {
   const [city, setCity] = useState(params.get("city") || "Tất cả");
   const [service, setService] = useState(params.get("service") || "all");
   const [query, setQuery] = useState("");
+  const [area, setArea] = useState("Tất cả");
+  const [language, setLanguage] = useState("Tất cả");
+  const [maxPrice, setMaxPrice] = useState("all");
+  const [sort, setSort] = useState("featured");
+  const areas = ["Tất cả", "Chợ Bạch Mã", "Sha He", "Huaqiangbei", "Xingfa", "Yiwu", "City tour", "Sân bay"];
+  const languages = ["Tất cả", "Tiếng Việt", "Tiếng Trung", "Tiếng Anh", "Tiếng Quảng Đông"];
   const filtered = guides.filter((guide) => {
     const cityMatch = city === "Tất cả" || guide.city === city;
-    const queryMatch = `${guide.name} ${guide.city} ${guide.specialties.join(" ")}`.toLowerCase().includes(query.toLowerCase());
+    const haystack = `${guide.name} ${guide.city} ${guide.specialties.join(" ")} ${guide.languages.join(" ")} ${guide.bio}`.toLowerCase();
+    const queryMatch = haystack.includes(query.toLowerCase());
     const serviceMatch = service === "all" || guide.specialties.join(" ").toLowerCase().includes(service === "sourcing" ? "chợ" : "") || service !== "sourcing";
-    return cityMatch && queryMatch && serviceMatch;
-  });
+    const areaMatch = area === "Tất cả" || haystack.includes(area.toLowerCase());
+    const languageMatch = language === "Tất cả" || guide.languages.some((item) => item.includes(language));
+    const priceMatch = maxPrice === "all" || guide.pricePerDay <= Number(maxPrice);
+    return cityMatch && queryMatch && serviceMatch && areaMatch && languageMatch && priceMatch;
+  }).sort((a, b) => sort === "price" ? a.pricePerDay - b.pricePerDay : sort === "response" ? b.responseRate - a.responseRate : b.rating - a.rating);
   return (
     <PageShell>
       <main className="mx-auto max-w-7xl px-4 py-8 md:px-8">
         <div className="rounded-3xl bg-[#f8f3f2] p-6 md:p-8">
           <h1 className="text-3xl font-bold tracking-[-0.04em]">Tìm Local Guide</h1>
-          <p className="mt-2 text-[#5b5f61]">Lọc theo thành phố, chuyên môn và nhu cầu chuyến đi.</p>
-          <div className="mt-6 grid gap-3 md:grid-cols-3">
+          <p className="mt-2 text-[#5b5f61]">Lọc theo thành phố, khu vực/chợ, ngôn ngữ, mức giá/ngày và nhu cầu chuyến đi.</p>
+          <div className="mt-6 grid gap-3 md:grid-cols-3 xl:grid-cols-6">
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Tìm tên guide, chợ, kỹ năng..." className="rounded-xl border border-[#e2e2e5] px-4 py-3 outline-none focus:border-[#b7131a]" />
             <select value={city} onChange={(event) => setCity(event.target.value)} className="rounded-xl border border-[#e2e2e5] px-4 py-3 outline-none focus:border-[#b7131a]">
-              {["Tất cả", "Quảng Châu", "Thâm Quyến", "Bắc Kinh", "Thượng Hải"].map((item) => <option key={item}>{item}</option>)}
+              {["Tất cả", "Quảng Châu", "Thâm Quyến", "Bắc Kinh", "Thượng Hải", "Nghĩa Ô", "Thành Đô"].map((item) => <option key={item}>{item}</option>)}
             </select>
+            <select value={area} onChange={(event) => setArea(event.target.value)} className="rounded-xl border border-[#e2e2e5] px-4 py-3 outline-none focus:border-[#b7131a]">{areas.map((item) => <option key={item}>{item}</option>)}</select>
+            <select value={language} onChange={(event) => setLanguage(event.target.value)} className="rounded-xl border border-[#e2e2e5] px-4 py-3 outline-none focus:border-[#b7131a]">{languages.map((item) => <option key={item}>{item}</option>)}</select>
+            <select value={maxPrice} onChange={(event) => setMaxPrice(event.target.value)} className="rounded-xl border border-[#e2e2e5] px-4 py-3 outline-none focus:border-[#b7131a]"><option value="all">Mọi mức giá</option><option value="2600000">Đến 2.6M/ngày</option><option value="3000000">Đến 3M/ngày</option><option value="3500000">Đến 3.5M/ngày</option></select>
             <select value={service} onChange={(event) => setService(event.target.value)} className="rounded-xl border border-[#e2e2e5] px-4 py-3 outline-none focus:border-[#b7131a]">
               <option value="all">Tất cả nhu cầu</option>
               {Object.entries(serviceLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
@@ -334,7 +348,7 @@ function GuideSearchPage() {
         </div>
         <div className="mt-6 flex items-center justify-between">
           <p className="font-semibold">Tìm thấy {filtered.length} guide</p>
-          <span className="text-sm text-[#5b5f61]">Sắp xếp: nổi bật</span>
+          <select value={sort} onChange={(event) => setSort(event.target.value)} className="rounded-xl border border-[#e2e2e5] px-3 py-2 text-sm font-semibold text-[#5b403d]"><option value="featured">Sắp xếp: nổi bật</option><option value="price">Giá thấp trước</option><option value="response">Phản hồi cao</option></select>
         </div>
         {filtered.length ? (
           <div className="mt-5 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{filtered.map((guide) => <GuideCard key={guide.id} guide={guide} />)}</div>
@@ -346,9 +360,49 @@ function GuideSearchPage() {
   );
 }
 
+function StarRatingInput({ value, onChange, label }: { value: number; onChange: (value: number) => void; label: string }) {
+  return (
+    <div>
+      <div className="mb-2 font-semibold text-[#5b403d]">{label}</div>
+      <div className="flex gap-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button key={star} type="button" onClick={() => onChange(star)} className={`text-2xl ${star <= value ? "text-[#f59e0b]" : "text-[#d8d8dc]"}`} aria-label={`${star} sao`}>
+            ★
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ReviewCard({ review }: { review: GuideReview }) {
+  return (
+    <article className="rounded-2xl border border-[#ece2e0] bg-white p-5">
+      <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+        <div>
+          <div className="font-bold">{review.travelerName}</div>
+          <div className="mt-1 text-sm text-[#5b5f61]">{new Date(review.createdAt).toLocaleDateString("vi-VN")}</div>
+        </div>
+        <div className="text-lg font-bold text-[#f59e0b]">{"★".repeat(review.rating)}<span className="text-[#d8d8dc]">{"★".repeat(5 - review.rating)}</span></div>
+      </div>
+      <p className="mt-4 leading-7 text-[#5b403d]">“{review.comment}”</p>
+      <div className="mt-4 grid gap-2 text-sm md:grid-cols-4">
+        <span>Đúng giờ: <b>{review.punctuality}/5</b></span>
+        <span>Giao tiếp: <b>{review.communication}/5</b></span>
+        <span>Chuyên môn: <b>{review.expertise}/5</b></span>
+        <span>Hỗ trợ: <b>{review.support}/5</b></span>
+      </div>
+      {review.wouldRecommend && <Badge tone="green">Sẵn sàng giới thiệu guide này</Badge>}
+    </article>
+  );
+}
+
 function GuideProfilePage() {
   const { id } = useParams();
   const guide = guides.find((item) => item.id === id) || guides[0];
+  const reviews = getReviewsForGuide(guide.id);
+  const averageRating = reviews.length ? reviews.reduce((total, review) => total + review.rating, 0) / reviews.length : guide.rating;
+  const reviewCount = guide.reviews + reviews.length;
   return (
     <PageShell>
       <main className="mx-auto max-w-7xl px-4 py-8 md:px-8">
@@ -361,7 +415,7 @@ function GuideProfilePage() {
                 <img src={guide.avatar} alt={guide.name} className="h-24 w-24 rounded-full border-4 border-white object-cover" />
                 <div className="text-white">
                   <h1 className="text-3xl font-bold">{guide.name}</h1>
-                  <p className="mt-1">{guide.city} · {guide.experienceYears} năm kinh nghiệm · ★ {guide.rating} ({guide.reviews})</p>
+                  <p className="mt-1">{guide.city} · {guide.experienceYears} năm kinh nghiệm · ★ {averageRating.toFixed(1)} ({reviewCount})</p>
                 </div>
               </div>
               <Link to={`/booking/new/${guide.id}`} className="rounded-xl bg-[#b7131a] px-6 py-3 text-center font-bold text-white">Đặt lịch guide</Link>
@@ -384,7 +438,9 @@ function GuideProfilePage() {
               </section>
               <section className="rounded-2xl bg-[#f8f3f2] p-5">
                 <h2 className="text-xl font-bold">Đánh giá gần đây</h2>
-                <p className="mt-3 leading-7 text-[#5b403d]">“Guide đúng giờ, dịch rõ ràng, biết cách hỏi giá và nhắc mình kiểm hàng trước khi đặt cọc. Rất phù hợp cho người Việt đi lần đầu.”</p>
+                <div className="mt-4 space-y-4">
+                  {reviews.length ? reviews.slice(0, 3).map((review) => <ReviewCard key={review.id} review={review} />) : <p className="leading-7 text-[#5b403d]">“Guide đúng giờ, dịch rõ ràng, biết cách hỏi giá và nhắc mình kiểm hàng trước khi đặt cọc. Rất phù hợp cho người Việt đi lần đầu.”</p>}
+                </div>
               </section>
             </div>
             <aside className="h-fit rounded-2xl border border-[#ece2e0] p-5">
@@ -415,23 +471,46 @@ function NewBookingPage() {
   const [duration, setDuration] = useState<Booking["duration"]>("full-day");
   const [serviceType, setServiceType] = useState<ServiceType>("sourcing");
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [startTime, setStartTime] = useState("09:00");
   const [guests, setGuests] = useState(2);
+  const [travelerName, setTravelerName] = useState("Nguyễn Minh Anh");
+  const [phone, setPhone] = useState("+84 912 345 678");
+  const [meetingPoint, setMeetingPoint] = useState("Ga Guangzhou Railway Station, cổng B");
+  const [hotel, setHotel] = useState("Khách sạn gần Yuexiu, Quảng Châu");
+  const [confirmationMode, setConfirmationMode] = useState<"instant" | "request">("request");
+  const [addons, setAddons] = useState<string[]>(["translation"]);
+  const [promo, setPromo] = useState("");
   const [notes, setNotes] = useState("Muốn đi chợ Bạch Mã, hỏi giá và kiểm mẫu trước khi đặt cọc.");
-  const total = duration === "hourly" ? guide.pricePerHour * 3 : duration === "half-day" ? Math.round(guide.pricePerDay * 0.6) : duration === "multi-day" ? guide.pricePerDay * 2 : guide.pricePerDay;
+  const baseHours = duration === "hourly" ? 3 : duration === "half-day" ? 4 : duration === "full-day" ? 8 : 16;
+  const baseTotal = duration === "hourly" ? guide.pricePerHour * 3 : duration === "half-day" ? Math.round(guide.pricePerDay * 0.6) : duration === "multi-day" ? guide.pricePerDay * 2 : guide.pricePerDay;
+  const addonOptions = [
+    ["translation", "Gói dịch nhanh Việt - Trung", 120000],
+    ["pickup", "Đón tại khách sạn/ga", 180000],
+    ["report", "Biên bản sau chuyến đi", 150000],
+    ["logistics", "Kết nối kho vận", 220000],
+  ] as const;
+  const addonTotal = addonOptions.filter(([key]) => addons.includes(key)).reduce((sum, [, , price]) => sum + price, 0);
+  const platformFee = Math.round((baseTotal + addonTotal) * 0.08);
+  const promoDiscount = promo.trim().toUpperCase() === "CTGNEW" ? 150000 : 0;
+  const total = Math.max(baseTotal + addonTotal + platformFee - promoDiscount, 0);
+  function toggleAddon(key: string) {
+    setAddons((current) => current.includes(key) ? current.filter((item) => item !== key) : [...current, key]);
+  }
   function submit(event: FormEvent) {
     event.preventDefault();
+    if (!travelerName.trim() || !phone.trim() || !meetingPoint.trim()) return;
     const booking: Booking = {
       id: `CTG-${Date.now().toString().slice(-6)}`,
       guideId: guide.id,
-      travelerName: "Nguyễn Minh Anh",
+      travelerName,
       city: guide.city,
       serviceType,
       date,
       duration,
       guests,
-      notes,
+      notes: `${notes}\nGiờ bắt đầu: ${startTime}\nĐiểm hẹn: ${meetingPoint}\nKhách sạn/khu vực lưu trú: ${hotel}\nAdd-on: ${addonOptions.filter(([key]) => addons.includes(key)).map(([, label]) => label).join(", ") || "Không có"}\nChế độ xác nhận: ${confirmationMode === "instant" ? "Ưu tiên xác nhận nhanh" : "Chờ guide nhận lịch"}`,
       totalAmount: total,
-      status: "pending",
+      status: confirmationMode === "instant" ? "confirmed" : "pending",
       createdAt: new Date().toISOString(),
     };
     saveBooking(booking);
@@ -439,23 +518,16 @@ function NewBookingPage() {
   }
   return (
     <PageShell>
-      <main className="mx-auto grid max-w-7xl gap-8 px-4 py-8 md:grid-cols-[1fr_380px] md:px-8">
-        <form onSubmit={submit} className="rounded-3xl border border-[#ece2e0] bg-white p-6 md:p-8">
-          <h1 className="text-3xl font-bold tracking-[-0.04em]">Đặt lịch với {guide.name}</h1>
-          <div className="mt-6 grid gap-5 md:grid-cols-2">
-            <label><span className="mb-2 block font-semibold">Ngày đi</span><input required type="date" value={date} onChange={(event) => setDate(event.target.value)} className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3" /></label>
-            <label><span className="mb-2 block font-semibold">Số khách</span><input min={1} type="number" value={guests} onChange={(event) => setGuests(Number(event.target.value))} className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3" /></label>
-            <label><span className="mb-2 block font-semibold">Thời lượng</span><select value={duration} onChange={(event) => setDuration(event.target.value as Booking["duration"])} className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3">{Object.entries(durationLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-            <label><span className="mb-2 block font-semibold">Loại dịch vụ</span><select value={serviceType} onChange={(event) => setServiceType(event.target.value as ServiceType)} className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3">{Object.entries(serviceLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-          </div>
-          <label className="mt-5 block"><span className="mb-2 block font-semibold">Ghi chú cho guide</span><textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={5} className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3" /></label>
-          <label className="mt-5 flex items-start gap-3 text-sm text-[#5b403d]"><input required type="checkbox" className="mt-1" /> Tôi đồng ý với điều khoản đặt lịch, chính sách hủy và lưu ý về các dịch vụ thanh toán xuyên biên giới.</label>
-          <button className="mt-6 rounded-xl bg-[#b7131a] px-6 py-3 font-bold text-white">Gửi yêu cầu đặt lịch</button>
-        </form>
-        <aside className="h-fit rounded-3xl bg-[#f8f3f2] p-6">
-          <div className="flex items-center gap-4"><img src={guide.avatar} alt={guide.name} className="h-16 w-16 rounded-full object-cover" /><div><h2 className="font-bold">{guide.name}</h2><p className="text-sm text-[#5b5f61]">{guide.city} · ★ {guide.rating}</p></div></div>
-          <div className="mt-6 space-y-3 border-t border-[#ead7d4] pt-5 text-sm"><div className="flex justify-between"><span>Dịch vụ</span><b>{serviceLabels[serviceType]}</b></div><div className="flex justify-between"><span>Thời lượng</span><b>{durationLabels[duration]}</b></div><div className="flex justify-between"><span>Tạm tính</span><b>{formatVnd(total)}</b></div><div className="flex justify-between"><span>Phí nền tảng</span><b>0đ</b></div><div className="flex justify-between border-t border-[#ead7d4] pt-3 text-lg"><span>Tổng cộng</span><b className="text-[#b7131a]">{formatVnd(total)}</b></div></div>
-        </aside>
+      <main className="mx-auto max-w-7xl px-4 py-8 md:px-8">
+        <div className="mb-8 rounded-3xl bg-[#1a1c1e] p-8 text-white md:p-10"><Badge>Booking guide</Badge><h1 className="mt-4 text-4xl font-black tracking-[-0.05em]">Đặt lịch với {guide.name}</h1><p className="mt-3 max-w-3xl text-white/75">Chọn dịch vụ, thời lượng, điểm hẹn, add-on và kiểm tra tổng chi phí trước khi gửi yêu cầu.</p></div>
+        <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
+          <form onSubmit={submit} className="space-y-6">
+            <section className="rounded-3xl border border-[#ece2e0] bg-white p-6 md:p-8"><h2 className="text-2xl font-bold">1. Dịch vụ và lịch trình</h2><div className="mt-6 grid gap-5 md:grid-cols-2"><label><span className="mb-2 block font-semibold">Ngày đi</span><input required type="date" value={date} onChange={(event) => setDate(event.target.value)} className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3" /></label><label><span className="mb-2 block font-semibold">Giờ bắt đầu</span><input required type="time" value={startTime} onChange={(event) => setStartTime(event.target.value)} className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3" /></label><label><span className="mb-2 block font-semibold">Thời lượng</span><select value={duration} onChange={(event) => setDuration(event.target.value as Booking["duration"])} className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3">{Object.entries(durationLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label><span className="mb-2 block font-semibold">Loại dịch vụ</span><select value={serviceType} onChange={(event) => setServiceType(event.target.value as ServiceType)} className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3">{Object.entries(serviceLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label></div><div className="mt-5 grid gap-3 md:grid-cols-2">{[["request", "Chờ guide nhận lịch", "Phù hợp khi cần guide xác nhận lịch và yêu cầu chi tiết."], ["instant", "Ưu tiên xác nhận nhanh", "Dùng cho guide đang bật nhận lịch nhanh trong khung giờ còn trống."]].map(([value, title, desc]) => <button type="button" key={value} onClick={() => setConfirmationMode(value as "instant" | "request")} className={`rounded-2xl p-4 text-left ${confirmationMode === value ? "bg-[#fff1ef] ring-2 ring-[#b7131a]" : "bg-[#f8f3f2]"}`}><b>{title}</b><p className="mt-1 text-sm text-[#5b5f61]">{desc}</p></button>)}</div></section>
+            <section className="rounded-3xl border border-[#ece2e0] bg-white p-6 md:p-8"><h2 className="text-2xl font-bold">2. Thông tin khách và điểm hẹn</h2><div className="mt-6 grid gap-5 md:grid-cols-2"><label><span className="mb-2 block font-semibold">Tên người liên hệ</span><input required value={travelerName} onChange={(event) => setTravelerName(event.target.value)} className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3" /></label><label><span className="mb-2 block font-semibold">Số điện thoại / Zalo</span><input required value={phone} onChange={(event) => setPhone(event.target.value)} className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3" /></label><label><span className="mb-2 block font-semibold">Số khách</span><input min={1} max={20} type="number" value={guests} onChange={(event) => setGuests(Number(event.target.value))} className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3" /></label><label><span className="mb-2 block font-semibold">Khách sạn/khu vực lưu trú</span><input value={hotel} onChange={(event) => setHotel(event.target.value)} className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3" /></label></div><label className="mt-5 block"><span className="mb-2 block font-semibold">Điểm hẹn mong muốn</span><input required value={meetingPoint} onChange={(event) => setMeetingPoint(event.target.value)} className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3" /></label></section>
+            <section className="rounded-3xl border border-[#ece2e0] bg-white p-6 md:p-8"><h2 className="text-2xl font-bold">3. Add-on và ghi chú</h2><div className="mt-5 grid gap-3 md:grid-cols-2">{addonOptions.map(([key, label, price]) => <button type="button" key={key} onClick={() => toggleAddon(key)} className={`rounded-2xl p-4 text-left ${addons.includes(key) ? "bg-[#e7f7ed] ring-2 ring-[#087443]" : "bg-[#f8f3f2]"}`}><b>{label}</b><p className="mt-1 text-sm text-[#5b5f61]">+{formatVnd(price)}</p></button>)}</div><label className="mt-5 block"><span className="mb-2 block font-semibold">Ghi chú cho guide</span><textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={5} className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3" /></label><label className="mt-5 block"><span className="mb-2 block font-semibold">Mã ưu đãi</span><input value={promo} onChange={(event) => setPromo(event.target.value)} placeholder="Nhập CTGNEW để giảm 150.000đ" className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3" /></label><label className="mt-5 flex items-start gap-3 text-sm text-[#5b403d]"><input required type="checkbox" className="mt-1" /> Tôi đồng ý với điều khoản đặt lịch, chính sách hủy, quy trình xác minh guide và lưu ý về các dịch vụ thanh toán xuyên biên giới.</label><button className="mt-6 rounded-xl bg-[#b7131a] px-6 py-3 font-bold text-white">{confirmationMode === "instant" ? "Xác nhận và giữ lịch" : "Gửi yêu cầu đặt lịch"}</button></section>
+          </form>
+          <aside className="h-fit rounded-3xl bg-[#f8f3f2] p-6 lg:sticky lg:top-28"><div className="flex items-center gap-4"><img src={guide.avatar} alt={guide.name} className="h-16 w-16 rounded-full object-cover" /><div><h2 className="font-bold">{guide.name}</h2><p className="text-sm text-[#5b5f61]">{guide.city} · ★ {guide.rating} · phản hồi {guide.responseRate}%</p></div></div><div className="mt-5 rounded-2xl bg-white p-4 text-sm leading-6 text-[#5b403d]"><b>Khung giờ dự kiến</b><p>{date} · {startTime} · khoảng {baseHours} giờ</p><p className="mt-2">Điểm hẹn: {meetingPoint}</p></div><div className="mt-6 space-y-3 border-t border-[#ead7d4] pt-5 text-sm"><div className="flex justify-between"><span>Dịch vụ</span><b>{serviceLabels[serviceType]}</b></div><div className="flex justify-between"><span>Thời lượng</span><b>{durationLabels[duration]}</b></div><div className="flex justify-between"><span>Giá guide</span><b>{formatVnd(baseTotal)}</b></div><div className="flex justify-between"><span>Add-on</span><b>{formatVnd(addonTotal)}</b></div><div className="flex justify-between"><span>Phí nền tảng 8%</span><b>{formatVnd(platformFee)}</b></div>{promoDiscount > 0 && <div className="flex justify-between text-[#087443]"><span>Ưu đãi</span><b>-{formatVnd(promoDiscount)}</b></div>}<div className="flex justify-between border-t border-[#ead7d4] pt-3 text-lg"><span>Tổng cộng</span><b className="text-[#b7131a]">{formatVnd(total)}</b></div></div><div className="mt-5 rounded-2xl bg-white p-4 text-xs leading-5 text-[#5b5f61]"><b>Chính sách hủy:</b> Miễn phí nếu hủy trước 24 giờ. Với booking đã bắt đầu hoặc dịch vụ có phát sinh vé/đặt cọc, hệ thống sẽ đối soát theo tình huống.</div></aside>
+        </div>
       </main>
     </PageShell>
   );
@@ -464,6 +536,14 @@ function NewBookingPage() {
 function BookingStatusPage() {
   const { id } = useParams();
   const [booking, setBooking] = useState<Booking | undefined>(() => (id ? getBooking(id) : undefined));
+  const [savedReview, setSavedReview] = useState<GuideReview | undefined>(() => (id ? getReviewForBooking(id) : undefined));
+  const [rating, setRating] = useState(5);
+  const [punctuality, setPunctuality] = useState(5);
+  const [communication, setCommunication] = useState(5);
+  const [expertise, setExpertise] = useState(5);
+  const [support, setSupport] = useState(5);
+  const [wouldRecommend, setWouldRecommend] = useState(true);
+  const [comment, setComment] = useState("Guide đúng giờ, hỗ trợ tiếng Việt rõ ràng và nhắc mình kiểm tra kỹ trước khi đặt cọc.");
   const guide = guides.find((item) => item.id === booking?.guideId);
   const statuses: BookingStatus[] = ["pending", "confirmed", "paid", "active", "completed"];
   const labels: Record<BookingStatus, string> = { pending: "Chờ guide xác nhận", confirmed: "Guide đã xác nhận", paid: "Đã giữ chỗ", active: "Đang diễn ra", completed: "Hoàn thành", cancelled: "Đã hủy" };
@@ -471,6 +551,26 @@ function BookingStatusPage() {
     if (!booking) return;
     updateBookingStatus(booking.id, status);
     setBooking({ ...booking, status });
+  }
+  function submitReview(event: FormEvent) {
+    event.preventDefault();
+    if (!booking || !guide) return;
+    const review: GuideReview = {
+      id: `RV-${Date.now().toString().slice(-6)}`,
+      bookingId: booking.id,
+      guideId: guide.id,
+      travelerName: booking.travelerName,
+      rating,
+      punctuality,
+      communication,
+      expertise,
+      support,
+      comment,
+      wouldRecommend,
+      createdAt: new Date().toISOString(),
+    };
+    saveReview(review);
+    setSavedReview(review);
   }
   if (!booking || !guide) return <PageShell><main className="mx-auto max-w-3xl px-4 py-20 text-center"><h1 className="text-3xl font-bold">Không tìm thấy booking</h1><Link to="/guides" className="mt-5 inline-block rounded-xl bg-[#b7131a] px-5 py-3 font-bold text-white">Tìm guide mới</Link></main></PageShell>;
   const currentIndex = statuses.indexOf(booking.status);
@@ -486,6 +586,36 @@ function BookingStatusPage() {
             <div className="rounded-2xl bg-[#f8f3f2] p-5"><h2 className="font-bold">Chi tiết booking</h2><div className="mt-4 space-y-2 text-sm"><p>Thời lượng: {durationLabels[booking.duration]}</p><p>Số khách: {booking.guests}</p><p>Tổng tiền: {formatVnd(booking.totalAmount)}</p><p>Ghi chú: {booking.notes}</p></div></div>
             <div className="rounded-2xl bg-[#f8f3f2] p-5"><h2 className="font-bold">Cập nhật trạng thái</h2><div className="mt-4 flex flex-wrap gap-3"><button onClick={() => setStatus("confirmed")} className="rounded-lg bg-[#087443] px-4 py-2 font-bold text-white">Guide xác nhận</button><button onClick={() => setStatus("paid")} className="rounded-lg bg-[#b7131a] px-4 py-2 font-bold text-white">Giữ chỗ</button><button onClick={() => setStatus("completed")} className="rounded-lg border border-[#b7131a] px-4 py-2 font-bold text-[#b7131a]">Hoàn thành</button><Link to="/messages" className="rounded-lg bg-[#1a1c1e] px-4 py-2 font-bold text-white">Nhắn tin</Link></div></div>
           </div>
+          {booking.status === "completed" && (
+            <section className="mt-8 rounded-3xl border border-[#ece2e0] bg-white p-6 shadow-sm">
+              {savedReview ? (
+                <div>
+                  <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                    <div><h2 className="text-2xl font-bold">Đánh giá đã gửi</h2><p className="mt-1 text-[#5b5f61]">Cảm ơn bạn đã giúp cộng đồng chọn guide tốt hơn.</p></div>
+                    <Link to={`/guides/${guide.id}`} className="rounded-xl bg-[#b7131a] px-5 py-3 font-bold text-white">Xem hồ sơ guide</Link>
+                  </div>
+                  <div className="mt-5"><ReviewCard review={savedReview} /></div>
+                </div>
+              ) : (
+                <form onSubmit={submitReview}>
+                  <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                    <div><h2 className="text-2xl font-bold">Đánh giá {guide.name}</h2><p className="mt-2 text-[#5b5f61]">Chia sẻ trải nghiệm thực tế sau chuyến đi để giúp khách Việt khác chọn đúng Local Guide.</p></div>
+                    <Badge tone="green">Booking đã hoàn thành</Badge>
+                  </div>
+                  <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+                    <StarRatingInput label="Tổng thể" value={rating} onChange={setRating} />
+                    <StarRatingInput label="Đúng giờ" value={punctuality} onChange={setPunctuality} />
+                    <StarRatingInput label="Giao tiếp" value={communication} onChange={setCommunication} />
+                    <StarRatingInput label="Chuyên môn" value={expertise} onChange={setExpertise} />
+                    <StarRatingInput label="Hỗ trợ tiếng Việt" value={support} onChange={setSupport} />
+                  </div>
+                  <label className="mt-6 block"><span className="mb-2 block font-semibold">Nhận xét chi tiết</span><textarea required minLength={20} value={comment} onChange={(event) => setComment(event.target.value)} rows={5} className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3 outline-none focus:border-[#b7131a]" /></label>
+                  <label className="mt-4 flex items-start gap-3 text-sm text-[#5b403d]"><input type="checkbox" checked={wouldRecommend} onChange={(event) => setWouldRecommend(event.target.checked)} className="mt-1" /> Tôi sẵn sàng giới thiệu guide này cho khách Việt khác.</label>
+                  <button className="mt-6 rounded-xl bg-[#b7131a] px-6 py-3 font-bold text-white">Gửi đánh giá</button>
+                </form>
+              )}
+            </section>
+          )}
         </div>
       </main>
     </PageShell>
@@ -643,7 +773,10 @@ function SafetyPage() {
 }
 
 function UserProfilePage() {
-  return <PageShell><main className="mx-auto max-w-5xl px-4 py-10 md:px-8"><div className="rounded-3xl border border-[#ece2e0] bg-white p-6 md:p-8"><div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between"><div className="flex items-center gap-4"><div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#fff1ef] text-2xl font-bold text-[#b7131a]">MA</div><div><h1 className="text-3xl font-bold tracking-[-0.04em]">Nguyễn Minh Anh</h1><p className="mt-1 text-[#5b5f61]">Khách cá nhân · Thành viên đã xác minh email</p></div></div><Link to="/booking/CTG-000001" className="rounded-xl bg-[#b7131a] px-5 py-3 text-center font-bold text-white">Xem booking gần nhất</Link></div><div className="mt-8 grid gap-4 md:grid-cols-3">{[["Booking", "3 chuyến đã đặt"], ["Guide yêu thích", "5 hồ sơ đã lưu"], ["Thành phố quan tâm", "Quảng Châu, Thâm Quyến"]].map(([title, value]) => <div key={title} className="rounded-2xl bg-[#f8f3f2] p-5"><div className="font-bold">{title}</div><div className="mt-2 text-sm text-[#5b5f61]">{value}</div></div>)}</div></div></main></PageShell>;
+  const bookings = getBookings();
+  const latestBooking = bookings[0];
+  const latestGuide = guides.find((guide) => guide.id === latestBooking?.guideId);
+  return <PageShell><main className="mx-auto max-w-5xl px-4 py-10 md:px-8"><div className="rounded-3xl border border-[#ece2e0] bg-white p-6 md:p-8"><div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between"><div className="flex items-center gap-4"><div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#fff1ef] text-2xl font-bold text-[#b7131a]">MA</div><div><h1 className="text-3xl font-bold tracking-[-0.04em]">Nguyễn Minh Anh</h1><p className="mt-1 text-[#5b5f61]">Khách cá nhân · Thành viên đã xác minh email</p>{latestBooking && <p className="mt-2 text-sm text-[#5b403d]">Booking gần nhất: <b>{latestBooking.id}</b>{latestGuide ? ` · ${latestGuide.name}` : ""}</p>}</div></div>{latestBooking ? <Link to={`/booking/${latestBooking.id}`} className="rounded-xl bg-[#b7131a] px-5 py-3 text-center font-bold text-white">Xem booking gần nhất</Link> : <Link to="/guides" className="rounded-xl bg-[#b7131a] px-5 py-3 text-center font-bold text-white">Tìm guide để đặt lịch</Link>}</div><div className="mt-8 grid gap-4 md:grid-cols-3">{[["Booking", bookings.length ? `${bookings.length} chuyến đã đặt` : "Chưa có booking"], ["Guide yêu thích", "5 hồ sơ đã lưu"], ["Thành phố quan tâm", "Quảng Châu, Thâm Quyến"]].map(([title, value]) => <div key={title} className="rounded-2xl bg-[#f8f3f2] p-5"><div className="font-bold">{title}</div><div className="mt-2 text-sm text-[#5b5f61]">{value}</div></div>)}</div></div></main></PageShell>;
 }
 
 function WorkspacePage() {

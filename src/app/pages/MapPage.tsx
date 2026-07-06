@@ -82,7 +82,7 @@ const filters: { id: PlaceType | "all"; label: string }[] = [
 export function MapPage() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<PlaceType | "all">("all");
-  const [selectedTransit, setSelectedTransit] = useState<"metro" | "taxi" | "walk">("metro");
+  const [selectedTransit, setSelectedTransit] = useState<"metro" | "bus" | "taxi" | "walk">("metro");
   const [offlineDownloaded, setOfflineDownloaded] = useState(false);
   const [mapMode, setMapMode] = useState<"google" | "china">("google");
   const filteredPlaces = useMemo(() => {
@@ -95,7 +95,7 @@ export function MapPage() {
   const [selectedId, setSelectedId] = useState(places[0].id);
   const selectedPlace = places.find((place) => place.id === selectedId) || filteredPlaces[0] || places[0];
   const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(selectedPlace.mapQuery)}&output=embed`;
-  const directionsSrc = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(selectedPlace.mapQuery)}&travelmode=${selectedTransit === "metro" ? "transit" : selectedTransit === "taxi" ? "driving" : "walking"}`;
+  const directionsSrc = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(selectedPlace.mapQuery)}&travelmode=${selectedTransit === "metro" || selectedTransit === "bus" ? "transit" : selectedTransit === "taxi" ? "driving" : "walking"}`;
 
   return (
     <PublicLayout>
@@ -128,7 +128,7 @@ export function MapPage() {
             <div className="flex items-center justify-between gap-3">
               <div>
                 <div className="font-bold">Bản đồ offline Quảng Châu</div>
-                <div className="mt-1 text-xs text-[#5b5f61]">145 MB · cập nhật hôm nay</div>
+                <div className="mt-1 text-xs text-[#5b5f61]">145 MB · gồm metro, bus, chợ, ATM, bệnh viện</div>
               </div>
               <button onClick={() => setOfflineDownloaded(true)} className="rounded-xl bg-[#b7131a] px-4 py-2 text-xs font-bold text-white">
                 {offlineDownloaded ? "Đã tải" : "Tải"}
@@ -160,19 +160,21 @@ export function MapPage() {
           </div>
           <div className="mt-5">
             <h3 className="font-bold">Chỉ đường</h3>
-            <div className="mt-3 grid grid-cols-3 gap-2">
+            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
               {[
                 ["metro", "Metro"],
+                ["bus", "Xe bus"],
                 ["taxi", "Taxi"],
                 ["walk", "Đi bộ"],
               ].map(([value, label]) => (
-                <button key={value} onClick={() => setSelectedTransit(value as "metro" | "taxi" | "walk")} className={`rounded-xl px-3 py-2 text-sm font-bold ${selectedTransit === value ? "bg-[#b7131a] text-white" : "bg-[#f2f2f4] text-[#5b403d]"}`}>
+                <button key={value} onClick={() => setSelectedTransit(value as "metro" | "bus" | "taxi" | "walk")} className={`rounded-xl px-3 py-2 text-sm font-bold ${selectedTransit === value ? "bg-[#b7131a] text-white" : "bg-[#f2f2f4] text-[#5b403d]"}`}>
                   {label}
                 </button>
               ))}
             </div>
             <div className="mt-3 rounded-2xl border border-[#f0d8d5] p-4 text-sm leading-6 text-[#5b403d]">
               {selectedTransit === "metro" && "Gợi ý: đi metro đến ga gần nhất, sau đó đi bộ 6-10 phút. Phù hợp nếu bạn mang ít hàng."}
+              {selectedTransit === "bus" && "Gợi ý: xe bus phù hợp khi tuyến metro không tiện, nhưng nên lưu tên điểm đến bằng tiếng Trung và chuẩn bị tiền/QR nội địa."}
               {selectedTransit === "taxi" && "Gợi ý: dùng địa chỉ tiếng Trung từ guide, xác nhận cổng vào trước khi xuống xe."}
               {selectedTransit === "walk" && "Gợi ý: chỉ nên đi bộ nếu bạn đang ở khu chợ lân cận và không mang kiện hàng lớn."}
             </div>

@@ -75,6 +75,12 @@ export function SourcingPage() {
             ))}
           </div>
         </section>
+        <section className="bg-[#1a1c1e] py-14 text-white">
+          <div className="mx-auto grid max-w-7xl gap-8 px-4 md:grid-cols-[0.9fr_1.1fr] md:px-8">
+            <div><span className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold">Logistics và khai báo</span><h2 className="mt-4 text-3xl font-bold tracking-[-0.04em]">Không chỉ đi chợ, còn cần gom hàng đúng cách</h2><p className="mt-4 leading-8 text-white/75">Dân buôn cần quản lý kiện hàng, địa chỉ kho, mô tả hàng hóa, hóa đơn, ảnh mẫu và các lưu ý khi vận chuyển hàng dễ vỡ, mỹ phẩm, linh kiện điện tử hoặc đồ trẻ em.</p><Link to="/handbook/customs-declaration" className="mt-6 inline-block rounded-xl bg-white px-5 py-3 font-bold text-[#b7131a]">Xem checklist khai báo hàng hóa</Link></div>
+            <div className="grid gap-4 sm:grid-cols-2">{[["Địa chỉ kho", "Lưu kho nhận hàng, người nhận, số điện thoại và mã khách."], ["Đóng hàng", "Chụp ảnh trước khi đóng, niêm phong, ghi trọng lượng và số kiện."], ["Khai báo hàng hóa", "Mô tả đúng ngành hàng, số lượng, chất liệu, giá trị và lưu hóa đơn."], ["Đối tác vận chuyển", "So sánh SLA, tuyến vận chuyển, phụ phí và chính sách bồi hoàn."]].map(([title, desc]) => <div key={title} className="rounded-3xl bg-white/10 p-5 backdrop-blur"><h3 className="font-bold">{title}</h3><p className="mt-2 text-sm leading-6 text-white/70">{desc}</p></div>)}</div>
+          </div>
+        </section>
       </main>
     </PublicLayout>
   );

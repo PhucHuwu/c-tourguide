@@ -150,6 +150,19 @@ export function GuideOverviewPage() {
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         {[["Tỷ lệ chuyển đổi hồ sơ", "18%", "Khách xem hồ sơ rồi đặt lịch"], ["Tỷ lệ đúng giờ", "97%", "Dựa trên check-in điểm hẹn"], ["Điểm an toàn", "A", "Không có cảnh báo 30 ngày"]].map(([label, value, sub]) => <Metric key={label} label={label} value={value} sub={sub} />)}
       </div>
+      <section className="mt-6 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-[#ece2e0]">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div><h2 className="text-xl font-bold">Đánh giá mới từ khách</h2><p className="mt-1 text-sm text-[#5b5f61]">Theo dõi chất lượng phục vụ và phản hồi sau mỗi booking hoàn thành.</p></div>
+          <Pill>4.9 sao trung bình</Pill>
+        </div>
+        <div className="mt-5 grid gap-4 md:grid-cols-3">
+          {[
+            ["Nguyễn Minh Anh", "5", "Guide rất đúng giờ, dịch rõ ràng và nhắc mình kiểm hàng trước khi đặt cọc."],
+            ["VietHome Sourcing", "5", "Nắm chợ tốt, biết cách hỏi MOQ và thương lượng với chủ quầy."],
+            ["Trần Minh Khoa", "4", "Phiên dịch kỹ thuật ổn, nên gửi checklist thuật ngữ sớm hơn."],
+          ].map(([name, stars, text]) => <article key={name} className="rounded-2xl border border-[#ece2e0] p-4"><div className="flex items-center justify-between"><b>{name}</b><span className="font-bold text-[#f59e0b]">★ {stars}</span></div><p className="mt-3 text-sm leading-6 text-[#5b403d]">“{text}”</p></article>)}
+        </div>
+      </section>
     </GuideShell>
   );
 }

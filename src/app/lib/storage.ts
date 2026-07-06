@@ -1,8 +1,9 @@
-import type { Booking, BookingStatus, Message } from "../data/mock";
+import type { Booking, BookingStatus, GuideReview, Message } from "../data/mock";
 import { initialMessages } from "../data/mock";
 
 const BOOKINGS_KEY = "ctourguide.bookings";
 const MESSAGES_KEY = "ctourguide.messages";
+const REVIEWS_KEY = "ctourguide.reviews";
 
 function readJson<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
@@ -35,6 +36,23 @@ export function saveBooking(booking: Booking) {
 export function updateBookingStatus(id: string, status: BookingStatus) {
   const bookings = getBookings().map((booking) => (booking.id === id ? { ...booking, status } : booking));
   writeJson(BOOKINGS_KEY, bookings);
+}
+
+export function getReviews() {
+  return readJson<GuideReview[]>(REVIEWS_KEY, []);
+}
+
+export function getReviewsForGuide(guideId: string) {
+  return getReviews().filter((review) => review.guideId === guideId);
+}
+
+export function getReviewForBooking(bookingId: string) {
+  return getReviews().find((review) => review.bookingId === bookingId);
+}
+
+export function saveReview(review: GuideReview) {
+  const reviews = getReviews();
+  writeJson(REVIEWS_KEY, [review, ...reviews.filter((item) => item.bookingId !== review.bookingId)]);
 }
 
 export function getMessages() {
