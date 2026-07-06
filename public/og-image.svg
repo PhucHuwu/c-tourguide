@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="C-TourGuide social preview">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff8f6"/>
+      <stop offset="0.58" stop-color="#fff0ec"/>
+      <stop offset="1" stop-color="#e5f5f8"/>
+    </linearGradient>
+    <filter id="shadow" x="0" y="0" width="1200" height="630" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#5f3935" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1060" cy="110" r="220" fill="#ffd9d1" opacity="0.75"/>
+  <circle cx="110" cy="548" r="245" fill="#ccecf3" opacity="0.7"/>
+  <path d="M0 515 C170 465 300 560 475 520 C690 470 820 442 1200 505 L1200 630 L0 630 Z" fill="#ffffff" opacity="0.68"/>
+
+  <rect x="70" y="70" width="1060" height="490" rx="44" fill="#ffffff" opacity="0.94" filter="url(#shadow)"/>
+
+  <g transform="translate(120 120) scale(1.375)">
+    <rect width="64" height="64" rx="18" fill="#b7131a"/>
+    <path d="M32 10c-8.3 0-15 6.5-15 14.6 0 10.8 15 29.4 15 29.4s15-18.6 15-29.4C47 16.5 40.3 10 32 10Z" fill="#fff"/>
+    <circle cx="32" cy="25" r="6" fill="#b7131a"/>
+    <path d="M19 48c3.8-2.8 8.2-4.2 13-4.2s9.2 1.4 13 4.2" fill="none" stroke="#ffdad5" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  <text x="120" y="290" font-family="Arial, sans-serif" font-size="74" font-weight="800" fill="#241312">C-TourGuide</text>
+  <text x="120" y="352" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#503431">Hỗ trợ khách Việt tại Trung Quốc</text>
+  <text x="120" y="408" font-family="Arial, sans-serif" font-size="26" fill="#76524e">Local Guide tiếng Việt | Bản đồ | AI | Đánh hàng</text>
+  <rect x="120" y="456" width="300" height="52" rx="26" fill="#b7131a"/>
+  <text x="270" y="490" text-anchor="middle" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#ffffff">Đi Trung Quốc dễ hơn</text>
+
+  <rect x="785" y="118" width="285" height="390" rx="38" fill="#fff8f6" stroke="#ffd2ca" stroke-width="4"/>
+  <rect x="815" y="148" width="225" height="270" rx="30" fill="#ffffff"/>
+  <path d="M840 372 C880 318 922 326 954 268 C976 228 1000 204 1020 186" fill="none" stroke="#b7131a" stroke-width="10" stroke-linecap="round" stroke-dasharray="16 18"/>
+  <circle cx="840" cy="372" r="17" fill="#0f766e"/>
+  <circle cx="1020" cy="186" r="17" fill="#b7131a"/>
+  <g transform="translate(868 198) scale(1.875)">
+    <rect width="64" height="64" rx="18" fill="#b7131a"/>
+    <path d="M32 10c-8.3 0-15 6.5-15 14.6 0 10.8 15 29.4 15 29.4s15-18.6 15-29.4C47 16.5 40.3 10 32 10Z" fill="#fff"/>
+    <circle cx="32" cy="25" r="6" fill="#b7131a"/>
+    <path d="M19 48c3.8-2.8 8.2-4.2 13-4.2s9.2 1.4 13 4.2" fill="none" stroke="#ffdad5" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <rect x="828" y="438" width="200" height="38" rx="19" fill="#fff0ec"/>
+  <text x="928" y="463" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#8a2d26">Guide | Map | Pay</text>
+</svg>
