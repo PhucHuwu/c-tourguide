@@ -55,24 +55,50 @@ function Badge({ children, tone = "neutral" }: { children: React.ReactNode; tone
   return <span className={`rounded-full px-3 py-1 text-xs font-semibold ${tones[tone]}`}>{children}</span>;
 }
 
+function LazySection({ children, className = "" }: { children: ReactNode; className?: string }) {
+  const [visible, setVisible] = useState(false);
+  const id = useMemo(() => `lazy-${Math.random().toString(36).slice(2)}`, []);
+  useEffect(() => {
+    const node = document.getElementById(id);
+    if (!node) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setVisible(true);
+        observer.disconnect();
+      }
+    }, { rootMargin: "180px" });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [id]);
+  return <section id={id} className={`${className} ${visible ? "ctg-animate-in" : "opacity-0"}`}>{visible ? children : <div className="min-h-[260px] rounded-3xl bg-[#f8f3f2]" />}</section>;
+}
+
 function HomePage() {
   const navigate = useNavigate();
   const [city, setCity] = useState("Quảng Châu");
   const [service, setService] = useState<ServiceType>("sourcing");
+  const featuredGuides = guides.slice(0, 3);
+  const heroStats = [["1.800+", "guide và đối tác"], ["12 phút", "phản hồi trung bình"], ["24/7", "hỗ trợ hành trình"]];
   return (
     <PageShell>
-      <main>
-        <section className="mx-auto grid max-w-7xl gap-10 px-4 py-12 md:grid-cols-[1.05fr_0.95fr] md:px-8 md:py-20">
-          <div className="flex flex-col justify-center">
-            <Badge tone="red">Dành riêng cho người Việt đi Trung Quốc</Badge>
-            <h1 className="mt-5 max-w-3xl text-4xl font-bold leading-tight tracking-[-0.05em] md:text-6xl">
-              Đi Trung Quốc dễ hơn với <span className="text-[#b7131a]">Local Guide tiếng Việt</span>
-            </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-8 text-[#5b403d]">
-              Tìm hướng dẫn viên, phiên dịch viên và chuyên gia đánh hàng đáng tin cậy tại Quảng Châu, Thâm Quyến, Bắc Kinh, Thượng Hải.
-            </p>
+      <main className="overflow-hidden">
+        <section className="relative isolate bg-[#fff8f7]">
+          <div className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-[#ffdad5] blur-3xl ctg-glow" />
+          <div className="absolute -right-24 bottom-10 h-80 w-80 rounded-full bg-[#d8edf3] blur-3xl ctg-glow" />
+          <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 md:grid-cols-[1.02fr_0.98fr] md:px-8 md:py-20">
+            <div className="relative z-10 flex flex-col justify-center ctg-animate-in">
+              <Badge tone="red">Dành riêng cho người Việt đi Trung Quốc</Badge>
+              <h1 className="mt-5 max-w-3xl text-4xl font-black leading-tight tracking-[-0.065em] md:text-7xl">
+                Đi Trung Quốc dễ hơn với <span className="bg-gradient-to-r from-[#b7131a] to-[#f06c4f] bg-clip-text text-transparent">Local Guide tiếng Việt</span>
+              </h1>
+              <p className="mt-5 max-w-2xl text-lg leading-8 text-[#5b403d]">
+                Tìm guide, phiên dịch, chuyên gia đánh hàng và đối tác địa phương đáng tin cậy tại Quảng Châu, Thâm Quyến, Bắc Kinh, Thượng Hải.
+              </p>
+              <div className="mt-6 grid max-w-xl grid-cols-3 gap-3">
+                {heroStats.map(([value, label]) => <div key={label} className="rounded-2xl border border-white/70 bg-white/70 p-4 shadow-sm backdrop-blur"><div className="text-2xl font-black text-[#b7131a]">{value}</div><div className="mt-1 text-xs font-semibold text-[#5b403d]">{label}</div></div>)}
+              </div>
             <form
-              className="mt-8 grid gap-3 rounded-2xl border border-[#f0d8d5] bg-white p-4 shadow-xl shadow-[#b7131a]/10 md:grid-cols-[1fr_1fr_auto]"
+              className="mt-8 grid gap-3 rounded-3xl border border-white/80 bg-white/85 p-4 shadow-2xl shadow-[#b7131a]/10 backdrop-blur md:grid-cols-[1fr_1fr_auto]"
               onSubmit={(event) => {
                 event.preventDefault();
                 navigate(`/guides?city=${encodeURIComponent(city)}&service=${service}`);
@@ -96,13 +122,23 @@ function HomePage() {
               </label>
               <button className="rounded-xl bg-[#b7131a] px-6 py-3 font-bold text-white hover:bg-[#9f1016] md:self-end">Tìm guide</button>
             </form>
-          </div>
-          <div className="relative overflow-hidden rounded-[2rem] shadow-2xl shadow-[#5b403d]/20">
-            <img src={assets.heroImage} alt="Local guide hỗ trợ khách Việt tại Trung Quốc" className="h-full min-h-[360px] w-full object-cover" />
+              <div className="mt-5 flex flex-wrap gap-3 text-sm font-bold"><Link to="/markets" className="text-[#b7131a]">Khám phá chợ đầu mối</Link><Link to="/handbook" className="text-[#5b403d]">Đọc cẩm nang</Link><Link to="/ai" className="text-[#5b403d]">Hỏi trợ lý AI</Link></div>
+            </div>
+            <div className="relative min-h-[460px] ctg-animate-in" style={{ animationDelay: "120ms" }}>
+              <div className="absolute inset-8 rotate-3 rounded-[2.5rem] bg-[#b7131a]/10 blur-sm" />
+              <div className="relative overflow-hidden rounded-[2.4rem] border border-white/60 bg-white p-2 shadow-2xl shadow-[#5b403d]/20 ctg-card-3d">
+                <img src={assets.heroImage} loading="eager" alt="Local guide hỗ trợ khách Việt tại Trung Quốc" className="h-[520px] w-full rounded-[2rem] object-cover" />
+                <div className="absolute inset-x-6 bottom-6 rounded-3xl border border-white/40 bg-white/85 p-5 shadow-xl backdrop-blur">
+                  <div className="flex items-center justify-between gap-4"><div><div className="text-sm font-bold text-[#b7131a]">Live trip assistant</div><div className="mt-1 text-xl font-black">Guide, bản đồ, chat dịch trong một hành trình</div></div><div className="rounded-2xl bg-[#e7f7ed] px-4 py-3 text-center"><div className="text-lg font-black text-[#087443]">4.9</div><div className="text-xs font-bold text-[#087443]">rating</div></div></div>
+                </div>
+              </div>
+              <div className="absolute -left-3 top-16 rounded-3xl bg-white/90 p-4 shadow-xl backdrop-blur ctg-float"><div className="text-xs font-bold text-[#5b5f61]">Đang xử lý</div><div className="mt-1 font-black">Booking Quảng Châu</div><div className="mt-2 text-xs text-[#087443]">Guide phản hồi sau 8 phút</div></div>
+              <div className="absolute -right-2 top-44 rounded-3xl bg-[#1a1c1e]/90 p-4 text-white shadow-xl backdrop-blur ctg-float-slow"><div className="text-xs text-white/70">AI dịch nhanh</div><div className="mt-1 font-black">请问多少钱?</div><div className="mt-1 text-xs text-white/70">Có giá bao nhiêu?</div></div>
+            </div>
           </div>
         </section>
 
-        <section className="bg-[#f8f3f2] py-14">
+        <LazySection className="bg-[#f8f3f2] py-14">
           <div className="mx-auto grid max-w-7xl gap-4 px-4 md:grid-cols-4 md:px-8">
             {[
               ["Guide xác minh", "Hồ sơ, đánh giá, tỷ lệ phản hồi và chuyên môn rõ ràng."],
@@ -110,15 +146,15 @@ function HomePage() {
               ["Chợ đầu mối", "Cẩm nang Quảng Châu, Thâm Quyến và guide biết mặc cả."],
               ["An toàn chuyến đi", "Theo dõi booking, chia sẻ vị trí và hỗ trợ khẩn cấp trong suốt hành trình."],
             ].map(([title, desc]) => (
-              <div key={title} className="rounded-2xl border border-[#f0d8d5] bg-white p-6">
+              <div key={title} className="rounded-2xl border border-[#f0d8d5] bg-white p-6 ctg-card-3d">
                 <h3 className="text-lg font-bold">{title}</h3>
                 <p className="mt-2 text-sm leading-6 text-[#5b5f61]">{desc}</p>
               </div>
             ))}
           </div>
-        </section>
+        </LazySection>
 
-        <section className="mx-auto max-w-7xl px-4 py-14 md:px-8">
+        <LazySection className="mx-auto max-w-7xl px-4 py-14 md:px-8">
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
               <Badge tone="blue">Guide nổi bật</Badge>
@@ -127,24 +163,112 @@ function HomePage() {
             <Link to="/guides" className="font-bold text-[#b7131a]">Xem tất cả guide</Link>
           </div>
           <div className="mt-8 grid gap-5 md:grid-cols-3">
-            {guides.slice(0, 3).map((guide) => <GuideCard key={guide.id} guide={guide} />)}
+            {featuredGuides.map((guide) => <GuideCard key={guide.id} guide={guide} />)}
           </div>
-        </section>
+        </LazySection>
 
-        <section className="mx-auto grid max-w-7xl gap-8 px-4 pb-16 md:grid-cols-[0.9fr_1.1fr] md:px-8">
-          <div className="overflow-hidden rounded-3xl">
-            <img src={assets.sourcingHero} alt="Dịch vụ đánh hàng tại Trung Quốc" className="h-full min-h-[320px] w-full object-cover" />
+        <LazySection className="mx-auto grid max-w-7xl gap-8 px-4 pb-16 md:grid-cols-[0.9fr_1.1fr] md:px-8">
+          <div className="overflow-hidden rounded-3xl shadow-2xl shadow-[#5b403d]/10 ctg-card-3d">
+            <img src={assets.sourcingHero} loading="lazy" alt="Dịch vụ đánh hàng tại Trung Quốc" className="h-full min-h-[320px] w-full object-cover" />
           </div>
-          <div className="rounded-3xl bg-[#b7131a] p-8 text-white md:p-10">
+          <div className="relative overflow-hidden rounded-3xl bg-[#b7131a] p-8 text-white md:p-10">
+            <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-white/15 blur-2xl" />
             <Badge>Dành cho dân buôn</Badge>
             <h2 className="mt-4 text-3xl font-bold tracking-[-0.04em]">Đi Quảng Châu đánh hàng lần đầu?</h2>
             <p className="mt-4 leading-7 text-white/85">C-TourGuide giúp bạn tìm đúng chợ, thuê guide biết mặc cả, kiểm hàng và kết nối kho vận về Việt Nam qua đối tác tin cậy.</p>
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">{[["Bạch Mã", "thời trang"], ["Sha He", "giá sỉ"], ["Huaqiangbei", "linh kiện"]].map(([name, sub]) => <div key={name} className="rounded-2xl bg-white/12 p-4 backdrop-blur"><div className="font-black">{name}</div><div className="text-sm text-white/70">{sub}</div></div>)}</div>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link to="/markets" className="rounded-xl bg-white px-5 py-3 font-bold text-[#b7131a]">Khám phá chợ</Link>
               <Link to="/guides?service=sourcing" className="rounded-xl border border-white/50 px-5 py-3 font-bold text-white">Tìm guide đánh hàng</Link>
             </div>
           </div>
-        </section>
+        </LazySection>
+
+        <LazySection className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
+          <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
+            <div>
+              <Badge tone="blue">Dịch vụ theo nhu cầu</Badge>
+              <h2 className="mt-3 text-3xl font-black tracking-[-0.04em] md:text-5xl">Một nền tảng cho mọi tình huống khi đi Trung Quốc</h2>
+              <p className="mt-4 leading-8 text-[#5b403d]">C-TourGuide kết nối người Việt với Local Guide, phiên dịch viên, chuyên gia đánh hàng, đối tác kho vận và công cụ hỗ trợ chuyến đi. Nội dung được xây dựng xoay quanh các nhu cầu thực tế: đi du lịch tự túc, đi công tác, tìm nguồn hàng, kiểm mẫu, đặt xe, dùng metro, thanh toán và xử lý tình huống khẩn cấp.</p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                ["Thuê Local Guide tiếng Việt", "Dẫn đường, phiên dịch, hỗ trợ mua vé, đặt xe, giải thích văn hóa và xử lý tình huống trong chuyến đi."],
+                ["Phiên dịch công tác", "Hỗ trợ gặp nhà cung cấp, đàm phán, ghi chú nội dung làm việc và chuẩn bị câu hỏi tiếng Trung."],
+                ["Đánh hàng Quảng Châu", "Đi chợ Bạch Mã, Sha He, Xingfa, Yide Road; hỏi MOQ, mặc cả, kiểm mẫu và gửi hàng về kho."],
+                ["Bản đồ, AI và cẩm nang", "Tra cứu địa điểm, hỏi trợ lý AI, đọc checklist và lưu các lưu ý quan trọng trước khi sang Trung Quốc."],
+              ].map(([title, desc]) => <article key={title} className="rounded-3xl border border-[#ece2e0] bg-white p-6 shadow-sm ctg-card-3d"><h3 className="text-xl font-bold">{title}</h3><p className="mt-3 text-sm leading-7 text-[#5b5f61]">{desc}</p></article>)}
+            </div>
+          </div>
+        </LazySection>
+
+        <LazySection className="bg-[#1a1c1e] py-16 text-white">
+          <div className="mx-auto max-w-7xl px-4 md:px-8">
+            <div className="max-w-3xl">
+              <Badge>Thành phố phổ biến</Badge>
+              <h2 className="mt-4 text-3xl font-black tracking-[-0.04em] md:text-5xl">Cẩm nang và guide theo từng thành phố Trung Quốc</h2>
+              <p className="mt-4 leading-8 text-white/70">Tối ưu cho các điểm đến người Việt quan tâm nhiều nhất: Quảng Châu đánh hàng, Thâm Quyến linh kiện, Thượng Hải công tác, Bắc Kinh du lịch lịch sử, Nghĩa Ô tìm nguồn sỉ và Thành Đô trải nghiệm ẩm thực.</p>
+            </div>
+            <div className="mt-8 grid gap-4 md:grid-cols-3">
+              {[
+                ["Quảng Châu", "Bạch Mã, Sha He, Xingfa, Yide Road", "/markets"],
+                ["Thâm Quyến", "Huaqiangbei, linh kiện điện tử, công tác", "/handbook/shenzhen-electronics"],
+                ["Thượng Hải", "Metro, hội chợ, công tác, city tour", "/handbook/shanghai-metro"],
+                ["Bắc Kinh", "Tử Cấm Thành, Vạn Lý Trường Thành", "/guides?city=Bắc%20Kinh"],
+                ["Nghĩa Ô", "Yiwu International Trade City, phụ kiện", "/markets/yiwu-international"],
+                ["Thành Đô", "Ẩm thực Tứ Xuyên, gấu trúc, tour gia đình", "/handbook/chengdu-food"],
+              ].map(([cityName, desc, to]) => <Link key={cityName} to={to} className="rounded-3xl border border-white/10 bg-white/8 p-6 backdrop-blur transition hover:-translate-y-1 hover:bg-white/12"><h3 className="text-2xl font-black">{cityName}</h3><p className="mt-3 text-sm leading-7 text-white/70">{desc}</p><span className="mt-5 inline-block text-sm font-bold text-[#ffdad5]">Xem hướng dẫn →</span></Link>)}
+            </div>
+          </div>
+        </LazySection>
+
+        <LazySection className="mx-auto max-w-7xl px-4 py-16 md:px-8">
+          <div className="grid gap-10 lg:grid-cols-[1fr_0.9fr]">
+            <div>
+              <Badge tone="green">Quy trình đặt guide</Badge>
+              <h2 className="mt-3 text-3xl font-black tracking-[-0.04em] md:text-5xl">Từ tìm guide đến hoàn tất chuyến đi trong vài bước</h2>
+              <div className="mt-8 space-y-4">
+                {[
+                  ["1", "Chọn thành phố và nhu cầu", "Tìm theo điểm đến, loại dịch vụ, ngân sách, kinh nghiệm và chuyên môn của guide."],
+                  ["2", "Trao đổi lịch trình", "Chat song ngữ, gửi địa điểm, ghi chú yêu cầu đặc biệt và thống nhất điểm hẹn."],
+                  ["3", "Xác nhận booking", "Theo dõi trạng thái đặt lịch, số tiền dự kiến, lịch làm việc và thông tin liên hệ."],
+                  ["4", "Đồng hành và đánh giá", "Guide hỗ trợ trong chuyến đi, sau đó khách lưu cẩm nang, hóa đơn và đánh giá chất lượng."],
+                ].map(([step, title, desc]) => <div key={step} className="flex gap-4 rounded-3xl bg-[#f8f3f2] p-5"><div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#b7131a] font-black text-white">{step}</div><div><h3 className="font-bold">{title}</h3><p className="mt-1 text-sm leading-6 text-[#5b403d]">{desc}</p></div></div>)}
+              </div>
+            </div>
+            <aside className="rounded-[2rem] bg-[#fff1ef] p-6 md:p-8">
+              <h3 className="text-2xl font-black tracking-[-0.04em]">Checklist SEO cho người đi Trung Quốc lần đầu</h3>
+              <div className="mt-5 grid gap-3">
+                {[
+                  "Chuẩn bị WeChat/Alipay, hộ chiếu, địa chỉ khách sạn bằng tiếng Trung.",
+                  "Lưu Google Maps hoặc bản đồ thay thế, ảnh chụp địa điểm và số điện thoại khẩn cấp.",
+                  "Nếu đi chợ đầu mối, chuẩn bị ảnh mẫu, size chart, MOQ, ngân sách và địa chỉ kho.",
+                  "Nếu đi công tác, chuẩn bị danh thiếp, nội dung cần phiên dịch và câu hỏi cho nhà cung cấp.",
+                ].map((item) => <label key={item} className="flex gap-3 rounded-2xl bg-white p-4 text-sm leading-6 text-[#5b403d]"><input type="checkbox" className="mt-1" />{item}</label>)}
+              </div>
+              <Link to="/handbook" className="mt-6 inline-block rounded-xl bg-[#b7131a] px-5 py-3 font-bold text-white">Xem toàn bộ cẩm nang</Link>
+            </aside>
+          </div>
+        </LazySection>
+
+        <LazySection className="bg-[#f8f3f2] py-16">
+          <div className="mx-auto max-w-7xl px-4 md:px-8">
+            <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+              <div><Badge tone="red">Câu hỏi thường gặp</Badge><h2 className="mt-3 text-3xl font-black tracking-[-0.04em] md:text-5xl">FAQ về thuê guide và đi Trung Quốc tự túc</h2></div>
+              <Link to="/safety" className="font-bold text-[#b7131a]">Xem an toàn và hỗ trợ</Link>
+            </div>
+            <div className="mt-8 grid gap-4 md:grid-cols-2">
+              {[
+                ["C-TourGuide có phù hợp cho dân buôn đi Quảng Châu không?", "Có. Nền tảng có guide chuyên chợ đầu mối, cẩm nang Bạch Mã, Sha He, Xingfa, Yide Road và đối tác kho vận hỗ trợ gom hàng."],
+                ["Tôi không biết tiếng Trung có đi tự túc được không?", "Bạn vẫn có thể đi nếu chuẩn bị kỹ. C-TourGuide hỗ trợ guide tiếng Việt, chat song ngữ, AI dịch nhanh, bản đồ và checklist theo từng thành phố."],
+                ["Có thể thuê guide theo giờ hay theo ngày?", "Có. Hồ sơ guide hiển thị giá theo giờ, nửa ngày, cả ngày hoặc nhiều ngày tùy loại dịch vụ như city tour, phiên dịch, đánh hàng."],
+                ["Cẩm nang trên trang có dùng được trước chuyến đi không?", "Có. Bạn có thể đọc trước về thanh toán, metro, chợ đầu mối, món ăn, cảnh báo rủi ro và lưu checklist quan trọng."],
+                ["Đối tác/người bán hàng dùng C-TourGuide như thế nào?", "Đối tác có khu vực riêng để nhận lead, quản lý dịch vụ, báo giá, đơn hàng, tin nhắn và hồ sơ xác minh."],
+                ["Trang có hỗ trợ tìm guide theo thành phố không?", "Có. Bạn có thể tìm guide tại Quảng Châu, Thâm Quyến, Bắc Kinh, Thượng Hải, Nghĩa Ô, Thành Đô và các điểm đến phổ biến khác."],
+              ].map(([question, answer]) => <details key={question} className="group rounded-3xl bg-white p-6 shadow-sm"><summary className="font-bold marker:text-[#b7131a]">{question}</summary><p className="mt-3 text-sm leading-7 text-[#5b403d]">{answer}</p></details>)}
+            </div>
+          </div>
+        </LazySection>
       </main>
     </PageShell>
   );
@@ -152,8 +276,8 @@ function HomePage() {
 
 function GuideCard({ guide }: { guide: (typeof guides)[number] }) {
   return (
-    <article className="overflow-hidden rounded-2xl border border-[#ece2e0] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-      <img src={guide.avatar} alt={guide.name} className="h-48 w-full object-cover" />
+    <article className="overflow-hidden rounded-2xl border border-[#ece2e0] bg-white shadow-sm ctg-card-3d">
+      <img src={guide.avatar} loading="lazy" alt={guide.name} className="h-48 w-full object-cover" />
       <div className="p-5">
         <div className="flex items-start justify-between gap-3">
           <div>

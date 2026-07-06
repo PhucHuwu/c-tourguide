@@ -21,3 +21,92 @@ button:disabled,
 [aria-disabled="true"] {
   cursor: not-allowed;
 }
+
+html,
+body,
+#root {
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+img,
+video,
+iframe {
+  max-width: 100%;
+}
+
+input,
+select,
+textarea,
+button {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+@media (max-width: 640px) {
+  h1 {
+    overflow-wrap: anywhere;
+  }
+
+  .rounded-3xl {
+    border-radius: 1.25rem;
+  }
+}
+
+@keyframes ctg-float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(0, -14px, 0) rotate(1deg); }
+}
+
+@keyframes ctg-fade-up {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ctg-glow {
+  0%, 100% { opacity: 0.45; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.08); }
+}
+
+.ctg-animate-in {
+  animation: ctg-fade-up 700ms ease both;
+}
+
+.ctg-float {
+  animation: ctg-float 5.5s ease-in-out infinite;
+}
+
+.ctg-float-slow {
+  animation: ctg-float 7.5s ease-in-out infinite;
+}
+
+.ctg-glow {
+  animation: ctg-glow 6s ease-in-out infinite;
+}
+
+.ctg-card-3d {
+  transform-style: preserve-3d;
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.ctg-card-3d:hover {
+  transform: perspective(900px) rotateX(2deg) rotateY(-3deg) translateY(-6px);
+  box-shadow: 0 24px 70px rgb(91 64 61 / 18%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ctg-animate-in,
+  .ctg-float,
+  .ctg-float-slow,
+  .ctg-glow {
+    animation: none;
+  }
+
+  .ctg-card-3d,
+  .ctg-card-3d:hover {
+    transform: none;
+  }
+}

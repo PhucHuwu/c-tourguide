@@ -76,7 +76,11 @@ function PartnerShell({ title, description, children }: { title: string; descrip
         <div className="mt-auto rounded-2xl border border-[#d6e5ea] p-4 text-xs leading-5 text-[#5b5f61]">Điểm ưu tiên hiển thị phụ thuộc tốc độ phản hồi, tỷ lệ hoàn tất đơn và độ đầy đủ của hồ sơ.</div>
       </aside>
       <main className="flex min-w-0 flex-1 flex-col overflow-y-auto">
-        <div className="flex-1 p-5 md:p-10">
+        <div className="border-b border-[#d6e5ea] bg-white px-4 py-3 md:hidden">
+          <div className="font-bold text-[#006578]">C-TourGuide Partner</div>
+          <div className="mt-3 flex gap-2 overflow-x-auto pb-1">{nav.map(([to, label]) => <Link key={to} to={to} className="shrink-0 rounded-full bg-[#e7f4f8] px-3 py-2 text-xs font-bold text-[#006578]">{label}</Link>)}</div>
+        </div>
+        <div className="flex-1 p-4 md:p-10">
           <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between"><div><div className="text-sm font-bold uppercase tracking-[0.18em] text-[#006578]">Partner workspace</div><h1 className="mt-2 text-4xl font-bold tracking-[-0.05em]">{title}</h1><p className="mt-2 max-w-3xl text-[#5b5f61]">{description}</p></div><div className="flex flex-wrap gap-2"><Link to="/partner/leads" className="rounded-xl border border-[#006578] px-5 py-3 font-bold text-[#006578]">Xem lead</Link><Link to="/partner/profile" className="rounded-xl bg-[#006578] px-5 py-3 font-bold text-white">Cập nhật hồ sơ</Link></div></div>
           {children}
         </div>
