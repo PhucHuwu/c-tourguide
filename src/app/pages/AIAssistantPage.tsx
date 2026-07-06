@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { PublicLayout } from "../components/layout/PublicLayout";
 
 type AiMessage = {
   id: string;
@@ -57,21 +57,8 @@ export function AIAssistantPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#fffdfc] font-['Be_Vietnam_Pro',sans-serif] text-[#1a1c1e]">
-      <header className="sticky top-0 z-50 border-b border-[#f0d8d5] bg-white/95 px-4 py-4 backdrop-blur md:px-8">
-        <div className="mx-auto flex max-w-7xl items-center justify-between">
-          <Link to="/" className="text-2xl font-bold text-[#b7131a]">C-TourGuide</Link>
-          <nav className="hidden gap-6 text-sm font-semibold text-[#5b5f61] md:flex">
-            <Link to="/guides">Tìm guide</Link>
-            <Link to="/markets">Đánh hàng</Link>
-            <Link to="/handbook">Cẩm nang</Link>
-            <Link to="/map">Bản đồ</Link>
-          </nav>
-          <Link to="/guide-register" className="rounded-xl bg-[#b7131a] px-4 py-2 text-sm font-bold text-white">Đăng ký làm guide</Link>
-        </div>
-      </header>
-
-      <main className="mx-auto grid w-full max-w-7xl flex-1 gap-6 px-4 py-8 md:grid-cols-[320px_1fr] md:px-8">
+    <PublicLayout>
+      <main className="mx-auto grid w-full max-w-7xl flex-1 items-start gap-6 px-4 py-8 md:grid-cols-[320px_1fr] md:px-8">
         <aside className="h-fit rounded-3xl bg-[#f8f3f2] p-5">
           <h1 className="text-2xl font-bold">Trợ lý AI</h1>
           <p className="mt-2 text-sm leading-6 text-[#5b5f61]">Trợ lý thông minh cho các tình huống người Việt thường gặp khi đi Trung Quốc.</p>
@@ -87,12 +74,12 @@ export function AIAssistantPage() {
           </div>
         </aside>
 
-        <section className="flex min-h-[680px] flex-col rounded-3xl border border-[#ece2e0] bg-white shadow-sm">
+        <section className="flex min-h-0 flex-col overflow-hidden rounded-3xl border border-[#ece2e0] bg-white shadow-sm" style={{ height: "clamp(560px, calc(100vh - 220px), 760px)" }}>
           <div className="border-b border-[#ece2e0] p-5">
             <h2 className="text-xl font-bold">Hội thoại</h2>
             <p className="mt-1 text-sm text-[#5b5f61]">Hỗ trợ câu hỏi văn bản, hình ảnh, camera và giọng nói trong hành trình.</p>
           </div>
-          <div className="flex-1 space-y-4 overflow-y-auto p-5">
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5">
             {messages.map((message) => (
               <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div className={`max-w-[82%] rounded-2xl px-4 py-3 leading-7 ${message.role === "user" ? "bg-[#b7131a] text-white" : "bg-[#f2f2f4] text-[#1a1c1e]"}`}>
@@ -122,19 +109,6 @@ export function AIAssistantPage() {
           </div>
         </section>
       </main>
-      <footer className="mt-auto border-t border-[#f0d8d5] bg-[#f8f3f2]">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 md:flex-row md:items-center md:justify-between md:px-8">
-          <div>
-            <div className="text-xl font-bold text-[#b7131a]">C-TourGuide</div>
-            <p className="mt-1 text-sm text-[#5b5f61]">Trợ lý AI hỗ trợ khách Việt tại Trung Quốc.</p>
-          </div>
-          <div className="flex flex-wrap gap-4 text-sm text-[#5b5f61]">
-            <Link to="/guides">Tìm guide</Link>
-            <Link to="/markets">Đánh hàng</Link>
-            <Link to="/safety">An toàn</Link>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </PublicLayout>
   );
 }

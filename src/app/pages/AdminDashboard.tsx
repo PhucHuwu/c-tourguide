@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { DashboardFooter } from "../components/layout/DashboardFooter";
 import svgPathsAdmin from "@/assets/generated/admin-dashboard/svg-paths";
 import userAvatar from "@/assets/generated/admin-dashboard/admin-avatar.png";
 
@@ -396,15 +397,7 @@ export function AdminDashboard() {
             </div>
           </div>
         </div>
-        <footer className="mt-auto border-t border-[#e2e2e5] bg-white px-[40px] py-[24px]">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div>
-              <div className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#b7131a] text-[18px]">C-TourGuide Admin</div>
-              <div className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[12px]">Quản trị chất lượng, booking, guide và báo cáo vận hành.</div>
-            </div>
-            <Link to="/" className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#b7131a] text-[14px]">Về trang chủ</Link>
-          </div>
-        </footer>
+        <DashboardFooter title="C-TourGuide Admin" description="Quản trị chất lượng, booking, guide và báo cáo vận hành." />
       </main>
     </div>
   );

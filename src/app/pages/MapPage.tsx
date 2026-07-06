@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router";
 import mapPlaceholder from "@/assets/generated/map/map-placeholder.png";
 import marketImage from "@/assets/generated/map/market.png";
+import { PublicLayout } from "../components/layout/PublicLayout";
 
 type PlaceType = "market" | "metro" | "atm" | "hospital" | "restroom";
 
@@ -84,20 +84,7 @@ export function MapPage() {
   const selectedPlace = places.find((place) => place.id === selectedId) || filteredPlaces[0] || places[0];
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#fffdfc] font-['Be_Vietnam_Pro',sans-serif] text-[#1a1c1e]">
-      <header className="sticky top-0 z-50 border-b border-[#f0d8d5] bg-white/95 px-4 py-4 backdrop-blur md:px-8">
-        <div className="mx-auto flex max-w-7xl items-center justify-between">
-          <Link to="/" className="text-2xl font-bold text-[#b7131a]">C-TourGuide</Link>
-          <nav className="hidden gap-6 text-sm font-semibold text-[#5b5f61] md:flex">
-            <Link to="/guides">Tìm guide</Link>
-            <Link to="/markets">Đánh hàng</Link>
-            <Link to="/handbook">Cẩm nang</Link>
-            <Link to="/ai">Trợ lý AI</Link>
-          </nav>
-          <Link to="/guide-register" className="rounded-xl bg-[#b7131a] px-4 py-2 text-sm font-bold text-white">Đăng ký làm guide</Link>
-        </div>
-      </header>
-
+    <PublicLayout>
       <main className="mx-auto grid w-full max-w-7xl flex-1 gap-6 px-4 py-8 md:grid-cols-[340px_1fr_340px] md:px-8">
         <aside className="rounded-3xl bg-[#f8f3f2] p-5">
           <h1 className="text-2xl font-bold">Bản đồ Trung Quốc</h1>
@@ -177,19 +164,6 @@ export function MapPage() {
           </div>
         </aside>
       </main>
-      <footer className="mt-auto border-t border-[#f0d8d5] bg-[#f8f3f2]">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 md:flex-row md:items-center md:justify-between md:px-8">
-          <div>
-            <div className="text-xl font-bold text-[#b7131a]">C-TourGuide</div>
-            <p className="mt-1 text-sm text-[#5b5f61]">Bản đồ hỗ trợ di chuyển, tìm chợ và tiện ích tại Trung Quốc.</p>
-          </div>
-          <div className="flex flex-wrap gap-4 text-sm text-[#5b5f61]">
-            <Link to="/guides">Tìm guide</Link>
-            <Link to="/ai">Trợ lý AI</Link>
-            <Link to="/safety">An toàn</Link>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </PublicLayout>
   );
 }

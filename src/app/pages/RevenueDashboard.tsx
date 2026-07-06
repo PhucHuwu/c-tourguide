@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import { useState } from "react";
 import { LineChart, Line, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Area, AreaChart } from "recharts";
+import { DashboardFooter } from "../components/layout/DashboardFooter";
 import svgPaths from "@/assets/generated/revenue-dashboard/svg-paths";
 import userAvatar1 from "@/assets/generated/revenue-dashboard/earner-avatar-1.png";
 import userAvatar2 from "@/assets/generated/revenue-dashboard/earner-avatar-2.png";
@@ -328,15 +329,7 @@ export function RevenueDashboard() {
             </table>
           </div>
         </div>
-        <footer className="mt-auto border-t border-[#e2e2e5] bg-white px-[40px] py-[24px]">
-          <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 flex-wrap">
-            <div>
-              <div className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#b7131a] text-[18px]">C-TourGuide Revenue</div>
-              <div className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[12px]">Theo dõi hoa hồng và hiệu suất doanh thu.</div>
-            </div>
-            <Link to="/" className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#b7131a] text-[14px]">Về trang chủ</Link>
-          </div>
-        </footer>
+        <DashboardFooter title="C-TourGuide Revenue" description="Theo dõi hoa hồng và hiệu suất doanh thu." />
       </main>
     </div>
   );

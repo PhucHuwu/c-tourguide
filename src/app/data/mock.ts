@@ -217,7 +217,7 @@ export const guides: Guide[] = [
   {
     id: "khoa-zhangjiajie",
     name: "Nguyễn Đăng Khoa",
-    city: "Trương Gia Giới",
+    city: "Thành Đô",
     avatar: guidePhoto2,
     cover: profileCover,
     gallery: [galleryTopRight, galleryLarge, galleryBottomRight],

@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { DashboardFooter } from "../components/layout/DashboardFooter";
 import svgPathsDashboard from "@/assets/generated/guide-dashboard/svg-paths";
 import userAvatar from "@/assets/generated/guide-dashboard/guide-avatar.png";
 import clientAvatar from "@/assets/generated/guide-dashboard/client-avatar.png";
@@ -451,15 +452,7 @@ export function GuideDashboard() {
             </div>
           </div>
         </div>
-        <footer className="mt-auto border-t border-[#e4beb9] bg-white px-[40px] py-[24px]">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div>
-              <div className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#b7131a] text-[18px]">C-TourGuide</div>
-              <div className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[12px]">Quản lý booking, lịch làm việc và thu nhập của guide.</div>
-            </div>
-            <Link to="/" className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#b7131a] text-[14px]">Về trang chủ</Link>
-          </div>
-        </footer>
+        <DashboardFooter title="C-TourGuide" description="Quản lý booking, lịch làm việc và thu nhập của guide." />
       </main>
     </div>
   );

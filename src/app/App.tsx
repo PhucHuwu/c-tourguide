@@ -1,11 +1,13 @@
-import { BrowserRouter, Link, NavLink, Route, Routes, useNavigate, useParams } from "react-router";
+import { BrowserRouter, Link, Route, Routes, useNavigate, useParams } from "react-router";
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import { AIAssistantPage } from "./pages/AIAssistantPage";
 import { AdminDashboard } from "./pages/AdminDashboard";
 import { GuideDashboard } from "./pages/GuideDashboard";
 import { MapPage } from "./pages/MapPage";
 import { RevenueDashboard } from "./pages/RevenueDashboard";
 import { SourcingPage } from "./pages/SourcingPage";
+import { PublicLayout } from "./components/layout/PublicLayout";
 import {
   assets,
   durationLabels,
@@ -21,95 +23,8 @@ import {
 } from "./data/mock";
 import { formatVnd, getBooking, getBookings, getMessages, saveBooking, saveMessages, updateBookingStatus } from "./lib/storage";
 
-const navItems = [
-  { to: "/guides", label: "Tìm guide" },
-  { to: "/markets", label: "Đánh hàng" },
-  { to: "/handbook", label: "Cẩm nang" },
-  { to: "/map", label: "Bản đồ" },
-  { to: "/ai", label: "Trợ lý AI" },
-];
-
-function Header() {
-  const [open, setOpen] = useState(false);
-  return (
-    <header className="sticky top-0 z-50 border-b border-[#f0d8d5] bg-[#fffdfc]/95 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-8">
-        <Link to="/" className="font-['Be_Vietnam_Pro',sans-serif] text-2xl font-bold tracking-[-0.04em] text-[#b7131a]">
-          C-TourGuide
-        </Link>
-        <nav className="hidden items-center gap-6 md:flex">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                `text-sm font-semibold transition-colors ${isActive ? "text-[#b7131a]" : "text-[#5b5f61] hover:text-[#b7131a]"}`
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
-        <div className="hidden items-center gap-3 md:flex">
-          <Link to="/messages" className="rounded-lg px-4 py-2 text-sm font-semibold text-[#5b403d] hover:bg-[#fff1ef]">
-            Tin nhắn
-          </Link>
-          <Link to="/guide-register" className="rounded-lg bg-[#b7131a] px-4 py-2 text-sm font-semibold text-white hover:bg-[#9f1016]">
-            Đăng ký làm guide
-          </Link>
-        </div>
-        <button className="rounded-lg border border-[#f0d8d5] px-3 py-2 text-sm font-semibold text-[#b7131a] md:hidden" onClick={() => setOpen((value) => !value)}>
-          Menu
-        </button>
-      </div>
-      {open && (
-        <div className="border-t border-[#f0d8d5] bg-white px-4 py-3 md:hidden">
-          <div className="flex flex-col gap-2">
-            {navItems.map((item) => (
-              <Link key={item.to} to={item.to} onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 font-semibold text-[#5b403d] hover:bg-[#fff1ef]">
-                {item.label}
-              </Link>
-            ))}
-            <Link to="/messages" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 font-semibold text-[#5b403d] hover:bg-[#fff1ef]">
-              Tin nhắn
-            </Link>
-            <Link to="/guide-register" onClick={() => setOpen(false)} className="rounded-lg bg-[#b7131a] px-3 py-2 text-center font-semibold text-white">
-              Đăng ký làm guide
-            </Link>
-          </div>
-        </div>
-      )}
-    </header>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="border-t border-[#f0d8d5] bg-[#f8f3f2]">
-      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 md:flex-row md:items-center md:justify-between md:px-8">
-        <div>
-          <div className="text-xl font-bold text-[#b7131a]">C-TourGuide</div>
-          <p className="mt-1 text-sm text-[#5b5f61]">Nền tảng hỗ trợ người Việt đi Trung Quốc an toàn và thuận tiện hơn.</p>
-        </div>
-        <div className="flex flex-wrap gap-4 text-sm text-[#5b5f61]">
-          <Link to="/safety">An toàn</Link>
-          <Link to="/guide-register">Dành cho guide</Link>
-          <Link to="/admin">Quản trị</Link>
-          <Link to="/revenue">Doanh thu</Link>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-function PageShell({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex min-h-screen flex-col bg-[#fffdfc] font-['Be_Vietnam_Pro',sans-serif] text-[#1a1c1e]">
-      <Header />
-      <div className="flex-1">{children}</div>
-      <Footer />
-    </div>
-  );
+function PageShell({ children }: { children: ReactNode }) {
+  return <PublicLayout>{children}</PublicLayout>;
 }
 
 function Badge({ children, tone = "neutral" }: { children: React.ReactNode; tone?: "red" | "green" | "blue" | "neutral" }) {
@@ -451,11 +366,11 @@ function MessagesPage() {
   }
   return (
     <PageShell>
-      <main className="mx-auto grid max-w-7xl gap-6 px-4 py-8 md:grid-cols-[280px_1fr] md:px-8">
+      <main className="mx-auto grid max-w-7xl items-start gap-6 px-4 py-8 md:grid-cols-[280px_1fr] md:px-8">
         <aside className="rounded-3xl bg-[#f8f3f2] p-5"><h1 className="text-2xl font-bold">Tin nhắn</h1><button className="mt-5 w-full rounded-2xl bg-white p-4 text-left shadow-sm"><b>Phạm Khánh Linh</b><p className="mt-1 text-sm text-[#5b5f61]">Guide Quảng Châu · trực tuyến</p></button><button className="mt-3 w-full rounded-2xl bg-white p-4 text-left shadow-sm"><b>Hỗ trợ C-TourGuide</b><p className="mt-1 text-sm text-[#5b5f61]">Luôn sẵn sàng hỗ trợ</p></button></aside>
-        <section className="flex min-h-[620px] flex-col rounded-3xl border border-[#ece2e0] bg-white">
+        <section className="flex min-h-0 flex-col overflow-hidden rounded-3xl border border-[#ece2e0] bg-white" style={{ height: "clamp(520px, calc(100vh - 220px), 760px)" }}>
           <div className="border-b border-[#ece2e0] p-5"><h2 className="font-bold">Chat song ngữ Việt - Trung</h2><p className="text-sm text-[#5b5f61]">Tự động dịch đang bật để guide và khách trao đổi thuận tiện hơn.</p></div>
-          <div className="flex-1 space-y-4 overflow-y-auto p-5">{messages.map((message) => <div key={message.id} className={`flex ${message.author === "traveler" ? "justify-end" : "justify-start"}`}><div className={`max-w-[78%] rounded-2xl px-4 py-3 ${message.author === "traveler" ? "bg-[#b7131a] text-white" : message.author === "system" ? "bg-[#f8f3f2]" : "bg-[#f2f2f4]"}`}><p>{message.text}</p>{message.translation && <p className="mt-2 text-sm opacity-75">{message.translation}</p>}{message.kind === "location" && <div className="mt-3 rounded-xl bg-white/20 p-3 text-sm">Vị trí đã chia sẻ · mở trong bản đồ</div>}<span className="mt-2 block text-xs opacity-70">{message.time}</span></div></div>)}</div>
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5">{messages.map((message) => <div key={message.id} className={`flex ${message.author === "traveler" ? "justify-end" : "justify-start"}`}><div className={`max-w-[78%] rounded-2xl px-4 py-3 ${message.author === "traveler" ? "bg-[#b7131a] text-white" : message.author === "system" ? "bg-[#f8f3f2]" : "bg-[#f2f2f4]"}`}><p>{message.text}</p>{message.translation && <p className="mt-2 text-sm opacity-75">{message.translation}</p>}{message.kind === "location" && <div className="mt-3 rounded-xl bg-white/20 p-3 text-sm">Vị trí đã chia sẻ · mở trong bản đồ</div>}<span className="mt-2 block text-xs opacity-70">{message.time}</span></div></div>)}</div>
           <div className="border-t border-[#ece2e0] p-4"><div className="flex gap-2"><button onClick={() => send("location")} className="rounded-xl border border-[#e2e2e5] px-4 font-bold text-[#5b403d]">Vị trí</button><input value={text} onChange={(event) => setText(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") send(); }} placeholder="Nhập tin nhắn..." className="flex-1 rounded-xl border border-[#e2e2e5] px-4 py-3 outline-none focus:border-[#b7131a]" /><button onClick={() => send()} className="rounded-xl bg-[#b7131a] px-5 font-bold text-white">Gửi</button></div></div>
         </section>
       </main>
