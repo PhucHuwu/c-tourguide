@@ -161,7 +161,13 @@ export function AIAssistantPage() {
         }),
       });
 
-      const data = await response.json();
+      const responseText = await response.text();
+      let data: { text?: string; error?: string } = {};
+      try {
+        data = responseText ? JSON.parse(responseText) : {};
+      } catch {
+        throw new Error(responseText.slice(0, 160) || "Máy chủ AI không trả về JSON hợp lệ");
+      }
       if (!response.ok) throw new Error(data?.error || "Không thể kết nối AI");
       setMessages((current) => [...current, { id: `a-${Date.now()}`, role: "assistant", text: data.text || "Tôi chưa có câu trả lời phù hợp." }]);
     } catch (requestError) {
