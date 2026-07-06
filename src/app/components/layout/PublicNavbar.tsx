@@ -1,16 +1,50 @@
 import { NavLink } from "react-router";
+import { useEffect, useMemo, useState } from "react";
+import { getSession, SESSION_EVENT, type AccountRole, type Session } from "../../lib/auth";
 
-const navItems = [
+const publicNavItems = [
   { to: "/", label: "Trang chủ", end: true },
   { to: "/guides", label: "Tìm guide" },
   { to: "/markets", label: "Đánh hàng" },
   { to: "/handbook", label: "Cẩm nang" },
   { to: "/map", label: "Bản đồ" },
   { to: "/ai", label: "Trợ lý AI" },
-  { to: "/messages", label: "Tin nhắn" },
 ];
 
+const roleNavItems: Record<AccountRole, { to: string; label: string }[]> = {
+  traveler: [
+    { to: "/profile", label: "Tài khoản" },
+    { to: "/messages", label: "Tin nhắn" },
+  ],
+  guide: [
+    { to: "/dashboard", label: "Dashboard guide" },
+    { to: "/messages", label: "Tin nhắn" },
+    { to: "/revenue", label: "Thu nhập" },
+  ],
+  merchant: [
+    { to: "/partner-onboarding", label: "Hồ sơ đối tác" },
+    { to: "/partner/leads", label: "Nguồn khách" },
+  ],
+  admin: [
+    { to: "/admin", label: "Quản trị" },
+    { to: "/revenue", label: "Doanh thu" },
+  ],
+};
+
 export function PublicNavbar() {
+  const [session, setSession] = useState<Session | null>(() => getSession());
+  const navItems = useMemo(() => [...publicNavItems, ...(session ? roleNavItems[session.role] : [])], [session]);
+
+  useEffect(() => {
+    const syncSession = () => setSession(getSession());
+    window.addEventListener("storage", syncSession);
+    window.addEventListener(SESSION_EVENT, syncSession);
+    return () => {
+      window.removeEventListener("storage", syncSession);
+      window.removeEventListener(SESSION_EVENT, syncSession);
+    };
+  }, []);
+
   return (
     <div className="border-b border-[#f0d8d5] bg-white/95 backdrop-blur">
       <nav className="mx-auto flex max-w-7xl items-center gap-1 overflow-x-auto px-4 py-2 md:px-8" aria-label="Điều hướng chính">

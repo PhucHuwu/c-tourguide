@@ -9,6 +9,7 @@ import { RevenueDashboard } from "./pages/RevenueDashboard";
 import { SourcingPage } from "./pages/SourcingPage";
 import { PublicLayout } from "./components/layout/PublicLayout";
 import { LoginPage, PartnerOnboardingPage, RegisterPage } from "./pages/AuthPages";
+import { getSession, roleHomePath } from "./lib/auth";
 import {
   assets,
   durationLabels,
@@ -413,6 +414,21 @@ function UserProfilePage() {
   return <PageShell><main className="mx-auto max-w-5xl px-4 py-10 md:px-8"><div className="rounded-3xl border border-[#ece2e0] bg-white p-6 md:p-8"><div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between"><div className="flex items-center gap-4"><div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#fff1ef] text-2xl font-bold text-[#b7131a]">MA</div><div><h1 className="text-3xl font-bold tracking-[-0.04em]">Nguyễn Minh Anh</h1><p className="mt-1 text-[#5b5f61]">Khách cá nhân · Thành viên đã xác minh email</p></div></div><Link to="/booking/CTG-000001" className="rounded-xl bg-[#b7131a] px-5 py-3 text-center font-bold text-white">Xem booking gần nhất</Link></div><div className="mt-8 grid gap-4 md:grid-cols-3">{[["Booking", "3 chuyến đã đặt"], ["Guide yêu thích", "5 hồ sơ đã lưu"], ["Thành phố quan tâm", "Quảng Châu, Thâm Quyến"]].map(([title, value]) => <div key={title} className="rounded-2xl bg-[#f8f3f2] p-5"><div className="font-bold">{title}</div><div className="mt-2 text-sm text-[#5b5f61]">{value}</div></div>)}</div></div></main></PageShell>;
 }
 
+function PartnerLeadsPage() {
+  const leads = [
+    ["Khách đi Quảng Châu đánh hàng", "Cần kho nhận hàng và đóng gói trong 3 ngày", "Nóng"],
+    ["Nhóm 4 khách đi Thâm Quyến", "Tìm SIM/eSIM và xe đưa đón sân bay", "Mới"],
+    ["Shop mỹ phẩm online", "Cần tư vấn vận chuyển mỹ phẩm từ Quảng Châu", "Đang trao đổi"],
+  ];
+  return <PageShell><main className="mx-auto max-w-6xl px-4 py-10 md:px-8"><div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between"><div><h1 className="text-4xl font-bold tracking-[-0.05em]">Nguồn khách đối tác</h1><p className="mt-3 text-[#5b5f61]">Các nhu cầu dịch vụ phù hợp với hồ sơ nhà bán hàng/đối tác.</p></div><Link to="/partner-onboarding" className="font-bold text-[#b7131a]">Cập nhật hồ sơ đối tác</Link></div><div className="mt-8 grid gap-4">{leads.map(([title, desc, status]) => <article key={title} className="rounded-2xl border border-[#ece2e0] bg-white p-5 shadow-sm"><div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"><div><h2 className="text-xl font-bold">{title}</h2><p className="mt-2 text-[#5b5f61]">{desc}</p></div><span className="w-fit rounded-full bg-[#fff1ef] px-3 py-1 text-xs font-bold text-[#b7131a]">{status}</span></div></article>)}</div></main></PageShell>;
+}
+
+function WorkspacePage() {
+  const session = getSession();
+  if (!session) return <PageShell><main className="mx-auto max-w-3xl px-4 py-20 text-center"><h1 className="text-3xl font-bold">Bạn cần đăng nhập để vào khu vực tài khoản</h1><Link to="/login" className="mt-6 inline-block rounded-xl bg-[#b7131a] px-5 py-3 font-bold text-white">Đăng nhập</Link></main></PageShell>;
+  return <PageShell><main className="mx-auto max-w-3xl px-4 py-20 text-center"><h1 className="text-3xl font-bold">Khu vực tài khoản của bạn</h1><p className="mt-3 text-[#5b5f61]">Chọn tiếp để vào đúng trang chức năng theo vai trò hiện tại.</p><Link to={roleHomePath[session.role]} className="mt-6 inline-block rounded-xl bg-[#b7131a] px-5 py-3 font-bold text-white">Vào khu vực làm việc</Link></main></PageShell>;
+}
+
 function NotFoundPage() {
   return <PageShell><main className="mx-auto max-w-3xl px-4 py-20 text-center"><h1 className="text-4xl font-bold">Không tìm thấy trang</h1><Link to="/" className="mt-6 inline-block rounded-xl bg-[#b7131a] px-5 py-3 font-bold text-white">Về trang chủ</Link></main></PageShell>;
 }
@@ -440,6 +456,8 @@ export default function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/partner-onboarding" element={<PartnerOnboardingPage />} />
         <Route path="/profile" element={<UserProfilePage />} />
+        <Route path="/workspace" element={<WorkspacePage />} />
+        <Route path="/partner/leads" element={<PartnerLeadsPage />} />
         <Route path="/guide/dashboard" element={<GuideDashboard />} />
         <Route path="/dashboard" element={<GuideDashboard />} />
         <Route path="/admin" element={<AdminDashboard />} />

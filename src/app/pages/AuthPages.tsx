@@ -1,8 +1,9 @@
 import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { PublicLayout } from "../components/layout/PublicLayout";
+import { roleHomePath, saveSession as persistSession, type AccountRole } from "../lib/auth";
 
-type AccountType = "traveler" | "guide" | "merchant";
+type AccountType = Exclude<AccountRole, "admin">;
 
 const accountTypes: Record<AccountType, { title: string; description: string; fields: string[]; benefits: string[] }> = {
   traveler: {
@@ -30,10 +31,9 @@ export function LoginPage() {
   const [email, setEmail] = useState("minhanh@example.com");
   const [password, setPassword] = useState("12345678");
 
-  function saveSession(session: { email: string; name: string; role: "traveler" | "guide" | "merchant" }) {
-    window.localStorage.setItem("ctourguide.session", JSON.stringify(session));
-    window.dispatchEvent(new Event("ctourguide:session"));
-    navigate(session.role === "guide" ? "/dashboard" : session.role === "merchant" ? "/partner-onboarding" : "/guides");
+  function saveSession(session: { email: string; name: string; role: AccountRole }) {
+    persistSession(session);
+    navigate(roleHomePath[session.role]);
   }
 
   function submit(event: FormEvent) {
@@ -79,6 +79,7 @@ export function LoginPage() {
               <button type="button" onClick={() => saveSession({ email: "khach@example.com", name: "Nguyễn Minh Anh", role: "traveler" })} className="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-[#5b403d] hover:bg-[#fff1ef]">Khách cá nhân</button>
               <button type="button" onClick={() => saveSession({ email: "guide@example.com", name: "Phạm Khánh Linh", role: "guide" })} className="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-[#5b403d] hover:bg-[#fff1ef]">Local Guide</button>
               <button type="button" onClick={() => saveSession({ email: "partner@example.com", name: "China Logistics Hub", role: "merchant" })} className="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-[#5b403d] hover:bg-[#fff1ef]">Đối tác</button>
+              <button type="button" onClick={() => saveSession({ email: "admin@example.com", name: "Admin C-TourGuide", role: "admin" })} className="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-[#5b403d] hover:bg-[#fff1ef]">Admin</button>
             </div>
           </div>
         </form>
