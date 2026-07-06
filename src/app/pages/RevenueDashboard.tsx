@@ -332,7 +332,7 @@ export function RevenueDashboard() {
           <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 flex-wrap">
             <div>
               <div className="font-['Be_Vietnam_Pro',sans-serif] font-bold text-[#b7131a] text-[18px]">C-TourGuide Revenue</div>
-              <div className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[12px]">Dashboard demo theo dõi hoa hồng và hiệu suất doanh thu.</div>
+              <div className="font-['Be_Vietnam_Pro',sans-serif] text-[#5b5f61] text-[12px]">Theo dõi hoa hồng và hiệu suất doanh thu.</div>
             </div>
             <Link to="/" className="font-['Be_Vietnam_Pro',sans-serif] font-semibold text-[#b7131a] text-[14px]">Về trang chủ</Link>
           </div>

@@ -89,12 +89,12 @@ function Footer() {
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 md:flex-row md:items-center md:justify-between md:px-8">
         <div>
           <div className="text-xl font-bold text-[#b7131a]">C-TourGuide</div>
-          <p className="mt-1 text-sm text-[#5b5f61]">Nền tảng frontend demo hỗ trợ người Việt đi Trung Quốc.</p>
+          <p className="mt-1 text-sm text-[#5b5f61]">Nền tảng hỗ trợ người Việt đi Trung Quốc an toàn và thuận tiện hơn.</p>
         </div>
         <div className="flex flex-wrap gap-4 text-sm text-[#5b5f61]">
           <Link to="/safety">An toàn</Link>
           <Link to="/guide-register">Dành cho guide</Link>
-          <Link to="/admin">Admin demo</Link>
+          <Link to="/admin">Quản trị</Link>
           <Link to="/revenue">Doanh thu</Link>
         </div>
       </div>
@@ -175,7 +175,7 @@ function HomePage() {
               ["Guide xác minh", "Hồ sơ, đánh giá, tỷ lệ phản hồi và chuyên môn rõ ràng."],
               ["Dịch Việt - Trung", "Chat song ngữ, gợi ý câu nói và hỗ trợ tình huống thực tế."],
               ["Chợ đầu mối", "Cẩm nang Quảng Châu, Thâm Quyến và guide biết mặc cả."],
-              ["An toàn chuyến đi", "Theo dõi booking, chia sẻ vị trí và hỗ trợ khẩn cấp mock."],
+              ["An toàn chuyến đi", "Theo dõi booking, chia sẻ vị trí và hỗ trợ khẩn cấp trong suốt hành trình."],
             ].map(([title, desc]) => (
               <div key={title} className="rounded-2xl border border-[#f0d8d5] bg-white p-6">
                 <h3 className="text-lg font-bold">{title}</h3>
@@ -205,7 +205,7 @@ function HomePage() {
           <div className="rounded-3xl bg-[#b7131a] p-8 text-white md:p-10">
             <Badge>Dành cho dân buôn</Badge>
             <h2 className="mt-4 text-3xl font-bold tracking-[-0.04em]">Đi Quảng Châu đánh hàng lần đầu?</h2>
-            <p className="mt-4 leading-7 text-white/85">C-TourGuide giúp bạn tìm đúng chợ, thuê guide biết mặc cả, kiểm hàng và kết nối kho vận về Việt Nam qua đối tác mock.</p>
+            <p className="mt-4 leading-7 text-white/85">C-TourGuide giúp bạn tìm đúng chợ, thuê guide biết mặc cả, kiểm hàng và kết nối kho vận về Việt Nam qua đối tác tin cậy.</p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link to="/markets" className="rounded-xl bg-white px-5 py-3 font-bold text-[#b7131a]">Khám phá chợ</Link>
               <Link to="/guides?service=sourcing" className="rounded-xl border border-white/50 px-5 py-3 font-bold text-white">Tìm guide đánh hàng</Link>
@@ -364,7 +364,7 @@ function NewBookingPage() {
     const booking: Booking = {
       id: `CTG-${Date.now().toString().slice(-6)}`,
       guideId: guide.id,
-      travelerName: "Traveler Demo",
+      travelerName: "Nguyễn Minh Anh",
       city: guide.city,
       serviceType,
       date,
@@ -390,12 +390,12 @@ function NewBookingPage() {
             <label><span className="mb-2 block font-semibold">Loại dịch vụ</span><select value={serviceType} onChange={(event) => setServiceType(event.target.value as ServiceType)} className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3">{Object.entries(serviceLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
           </div>
           <label className="mt-5 block"><span className="mb-2 block font-semibold">Ghi chú cho guide</span><textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={5} className="w-full rounded-xl border border-[#e2e2e5] px-4 py-3" /></label>
-          <label className="mt-5 flex items-start gap-3 text-sm text-[#5b403d]"><input required type="checkbox" className="mt-1" /> Tôi hiểu đây là frontend demo. Các dịch vụ thanh toán/nạp tiền sẽ cần đối tác hợp pháp khi triển khai thật.</label>
+          <label className="mt-5 flex items-start gap-3 text-sm text-[#5b403d]"><input required type="checkbox" className="mt-1" /> Tôi đồng ý với điều khoản đặt lịch, chính sách hủy và lưu ý về các dịch vụ thanh toán xuyên biên giới.</label>
           <button className="mt-6 rounded-xl bg-[#b7131a] px-6 py-3 font-bold text-white">Gửi yêu cầu đặt lịch</button>
         </form>
         <aside className="h-fit rounded-3xl bg-[#f8f3f2] p-6">
           <div className="flex items-center gap-4"><img src={guide.avatar} alt={guide.name} className="h-16 w-16 rounded-full object-cover" /><div><h2 className="font-bold">{guide.name}</h2><p className="text-sm text-[#5b5f61]">{guide.city} · ★ {guide.rating}</p></div></div>
-          <div className="mt-6 space-y-3 border-t border-[#ead7d4] pt-5 text-sm"><div className="flex justify-between"><span>Dịch vụ</span><b>{serviceLabels[serviceType]}</b></div><div className="flex justify-between"><span>Thời lượng</span><b>{durationLabels[duration]}</b></div><div className="flex justify-between"><span>Tạm tính</span><b>{formatVnd(total)}</b></div><div className="flex justify-between"><span>Phí nền tảng demo</span><b>0đ</b></div><div className="flex justify-between border-t border-[#ead7d4] pt-3 text-lg"><span>Tổng cộng</span><b className="text-[#b7131a]">{formatVnd(total)}</b></div></div>
+          <div className="mt-6 space-y-3 border-t border-[#ead7d4] pt-5 text-sm"><div className="flex justify-between"><span>Dịch vụ</span><b>{serviceLabels[serviceType]}</b></div><div className="flex justify-between"><span>Thời lượng</span><b>{durationLabels[duration]}</b></div><div className="flex justify-between"><span>Tạm tính</span><b>{formatVnd(total)}</b></div><div className="flex justify-between"><span>Phí nền tảng</span><b>0đ</b></div><div className="flex justify-between border-t border-[#ead7d4] pt-3 text-lg"><span>Tổng cộng</span><b className="text-[#b7131a]">{formatVnd(total)}</b></div></div>
         </aside>
       </main>
     </PageShell>
@@ -424,8 +424,8 @@ function BookingStatusPage() {
           <p className="mt-2 text-[#5b5f61]">{serviceLabels[booking.serviceType]} tại {booking.city} cùng {guide.name} vào ngày {booking.date}</p>
           <div className="mt-8 grid gap-4 md:grid-cols-5">{statuses.map((status, index) => <div key={status} className={`rounded-2xl border p-4 ${index <= currentIndex ? "border-[#b7131a] bg-[#fff1ef]" : "border-[#ece2e0] bg-white"}`}><div className="font-bold">{index + 1}. {labels[status]}</div></div>)}</div>
           <div className="mt-8 grid gap-6 md:grid-cols-2">
-            <div className="rounded-2xl bg-[#f8f3f2] p-5"><h2 className="font-bold">Chi tiết booking</h2><div className="mt-4 space-y-2 text-sm"><p>Thời lượng: {durationLabels[booking.duration]}</p><p>Số khách: {booking.guests}</p><p>Tổng tiền demo: {formatVnd(booking.totalAmount)}</p><p>Ghi chú: {booking.notes}</p></div></div>
-            <div className="rounded-2xl bg-[#f8f3f2] p-5"><h2 className="font-bold">Thao tác demo</h2><div className="mt-4 flex flex-wrap gap-3"><button onClick={() => setStatus("confirmed")} className="rounded-lg bg-[#087443] px-4 py-2 font-bold text-white">Guide xác nhận</button><button onClick={() => setStatus("paid")} className="rounded-lg bg-[#b7131a] px-4 py-2 font-bold text-white">Giữ chỗ mock</button><button onClick={() => setStatus("completed")} className="rounded-lg border border-[#b7131a] px-4 py-2 font-bold text-[#b7131a]">Hoàn thành</button><Link to="/messages" className="rounded-lg bg-[#1a1c1e] px-4 py-2 font-bold text-white">Nhắn tin</Link></div></div>
+            <div className="rounded-2xl bg-[#f8f3f2] p-5"><h2 className="font-bold">Chi tiết booking</h2><div className="mt-4 space-y-2 text-sm"><p>Thời lượng: {durationLabels[booking.duration]}</p><p>Số khách: {booking.guests}</p><p>Tổng tiền: {formatVnd(booking.totalAmount)}</p><p>Ghi chú: {booking.notes}</p></div></div>
+            <div className="rounded-2xl bg-[#f8f3f2] p-5"><h2 className="font-bold">Cập nhật trạng thái</h2><div className="mt-4 flex flex-wrap gap-3"><button onClick={() => setStatus("confirmed")} className="rounded-lg bg-[#087443] px-4 py-2 font-bold text-white">Guide xác nhận</button><button onClick={() => setStatus("paid")} className="rounded-lg bg-[#b7131a] px-4 py-2 font-bold text-white">Giữ chỗ</button><button onClick={() => setStatus("completed")} className="rounded-lg border border-[#b7131a] px-4 py-2 font-bold text-[#b7131a]">Hoàn thành</button><Link to="/messages" className="rounded-lg bg-[#1a1c1e] px-4 py-2 font-bold text-white">Nhắn tin</Link></div></div>
           </div>
         </div>
       </main>
@@ -454,8 +454,8 @@ function MessagesPage() {
       <main className="mx-auto grid max-w-7xl gap-6 px-4 py-8 md:grid-cols-[280px_1fr] md:px-8">
         <aside className="rounded-3xl bg-[#f8f3f2] p-5"><h1 className="text-2xl font-bold">Tin nhắn</h1><button className="mt-5 w-full rounded-2xl bg-white p-4 text-left shadow-sm"><b>Phạm Khánh Linh</b><p className="mt-1 text-sm text-[#5b5f61]">Guide Quảng Châu · trực tuyến</p></button><button className="mt-3 w-full rounded-2xl bg-white p-4 text-left shadow-sm"><b>Hỗ trợ C-TourGuide</b><p className="mt-1 text-sm text-[#5b5f61]">Luôn sẵn sàng hỗ trợ</p></button></aside>
         <section className="flex min-h-[620px] flex-col rounded-3xl border border-[#ece2e0] bg-white">
-          <div className="border-b border-[#ece2e0] p-5"><h2 className="font-bold">Chat song ngữ Việt - Trung</h2><p className="text-sm text-[#5b5f61]">Tự động dịch đang bật · đây là mô phỏng frontend.</p></div>
-          <div className="flex-1 space-y-4 overflow-y-auto p-5">{messages.map((message) => <div key={message.id} className={`flex ${message.author === "traveler" ? "justify-end" : "justify-start"}`}><div className={`max-w-[78%] rounded-2xl px-4 py-3 ${message.author === "traveler" ? "bg-[#b7131a] text-white" : message.author === "system" ? "bg-[#f8f3f2]" : "bg-[#f2f2f4]"}`}><p>{message.text}</p>{message.translation && <p className="mt-2 text-sm opacity-75">{message.translation}</p>}{message.kind === "location" && <div className="mt-3 rounded-xl bg-white/20 p-3 text-sm">Vị trí đã chia sẻ · mở trong bản đồ mock</div>}<span className="mt-2 block text-xs opacity-70">{message.time}</span></div></div>)}</div>
+          <div className="border-b border-[#ece2e0] p-5"><h2 className="font-bold">Chat song ngữ Việt - Trung</h2><p className="text-sm text-[#5b5f61]">Tự động dịch đang bật để guide và khách trao đổi thuận tiện hơn.</p></div>
+          <div className="flex-1 space-y-4 overflow-y-auto p-5">{messages.map((message) => <div key={message.id} className={`flex ${message.author === "traveler" ? "justify-end" : "justify-start"}`}><div className={`max-w-[78%] rounded-2xl px-4 py-3 ${message.author === "traveler" ? "bg-[#b7131a] text-white" : message.author === "system" ? "bg-[#f8f3f2]" : "bg-[#f2f2f4]"}`}><p>{message.text}</p>{message.translation && <p className="mt-2 text-sm opacity-75">{message.translation}</p>}{message.kind === "location" && <div className="mt-3 rounded-xl bg-white/20 p-3 text-sm">Vị trí đã chia sẻ · mở trong bản đồ</div>}<span className="mt-2 block text-xs opacity-70">{message.time}</span></div></div>)}</div>
           <div className="border-t border-[#ece2e0] p-4"><div className="flex gap-2"><button onClick={() => send("location")} className="rounded-xl border border-[#e2e2e5] px-4 font-bold text-[#5b403d]">Vị trí</button><input value={text} onChange={(event) => setText(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") send(); }} placeholder="Nhập tin nhắn..." className="flex-1 rounded-xl border border-[#e2e2e5] px-4 py-3 outline-none focus:border-[#b7131a]" /><button onClick={() => send()} className="rounded-xl bg-[#b7131a] px-5 font-bold text-white">Gửi</button></div></div>
         </section>
       </main>
@@ -486,11 +486,11 @@ function HandbookPage() {
 }
 
 function GuideRegisterPage() {
-  return <PageShell><main className="mx-auto max-w-3xl px-4 py-10 md:px-8"><div className="rounded-3xl border border-[#ece2e0] bg-white p-6 md:p-8"><Badge tone="green">Dành cho Local Guide</Badge><h1 className="mt-4 text-3xl font-bold tracking-[-0.04em]">Đăng ký làm guide C-TourGuide</h1><p className="mt-3 text-[#5b5f61]">Form demo mô phỏng quy trình xác minh CCCD/hộ chiếu, khu vực sinh sống và kỹ năng dẫn khách.</p><div className="mt-6 grid gap-4"><input placeholder="Họ và tên" className="rounded-xl border border-[#e2e2e5] px-4 py-3" /><input placeholder="Thành phố đang sinh sống tại Trung Quốc" className="rounded-xl border border-[#e2e2e5] px-4 py-3" /><select className="rounded-xl border border-[#e2e2e5] px-4 py-3"><option>Chuyên môn chính: Guide đánh hàng</option><option>Guide du lịch</option><option>Phiên dịch công tác</option></select><button className="rounded-xl bg-[#b7131a] px-5 py-3 font-bold text-white">Gửi hồ sơ xác minh mock</button></div></div></main></PageShell>;
+  return <PageShell><main className="mx-auto max-w-3xl px-4 py-10 md:px-8"><div className="rounded-3xl border border-[#ece2e0] bg-white p-6 md:p-8"><Badge tone="green">Dành cho Local Guide</Badge><h1 className="mt-4 text-3xl font-bold tracking-[-0.04em]">Đăng ký làm guide C-TourGuide</h1><p className="mt-3 text-[#5b5f61]">Hoàn tất hồ sơ, xác minh giấy tờ, khu vực sinh sống và kỹ năng dẫn khách để bắt đầu nhận booking.</p><div className="mt-6 grid gap-4"><input placeholder="Họ và tên" className="rounded-xl border border-[#e2e2e5] px-4 py-3" /><input placeholder="Thành phố đang sinh sống tại Trung Quốc" className="rounded-xl border border-[#e2e2e5] px-4 py-3" /><select className="rounded-xl border border-[#e2e2e5] px-4 py-3"><option>Chuyên môn chính: Guide đánh hàng</option><option>Guide du lịch</option><option>Phiên dịch công tác</option></select><button className="rounded-xl bg-[#b7131a] px-5 py-3 font-bold text-white">Gửi hồ sơ xác minh</button></div></div></main></PageShell>;
 }
 
 function SafetyPage() {
-  return <PageShell><main className="mx-auto max-w-5xl px-4 py-10 md:px-8"><h1 className="text-4xl font-bold tracking-[-0.05em]">An toàn và hỗ trợ</h1><div className="mt-6 grid gap-4 md:grid-cols-3">{["Xác minh hai chiều", "Chia sẻ vị trí chuyến đi", "SOS và hỗ trợ khẩn cấp"].map((item) => <div key={item} className="rounded-2xl bg-[#f8f3f2] p-6"><h2 className="font-bold">{item}</h2><p className="mt-2 text-sm leading-6 text-[#5b403d]">Tính năng được mô phỏng ở frontend để thể hiện quy trình bảo vệ khách hàng khi triển khai thật.</p></div>)}</div></main></PageShell>;
+  return <PageShell><main className="mx-auto max-w-5xl px-4 py-10 md:px-8"><h1 className="text-4xl font-bold tracking-[-0.05em]">An toàn và hỗ trợ</h1><div className="mt-6 grid gap-4 md:grid-cols-3">{["Xác minh hai chiều", "Chia sẻ vị trí chuyến đi", "SOS và hỗ trợ khẩn cấp"].map((item) => <div key={item} className="rounded-2xl bg-[#f8f3f2] p-6"><h2 className="font-bold">{item}</h2><p className="mt-2 text-sm leading-6 text-[#5b403d]">C-TourGuide ưu tiên xác minh danh tính, theo dõi hành trình và hỗ trợ kịp thời khi khách cần trợ giúp.</p></div>)}</div></main></PageShell>;
 }
 
 function NotFoundPage() {

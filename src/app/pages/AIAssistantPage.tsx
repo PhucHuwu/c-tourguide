@@ -24,12 +24,12 @@ function answerFor(prompt: string) {
     return "Các rủi ro phổ biến: báo giá thấp nhưng đổi chất lượng khi giao, yêu cầu đặt cọc cao, không cho kiểm hàng, phí vận chuyển phát sinh và nhầm địa chỉ kho. Luôn chụp lại bill, WeChat cửa hàng, vị trí quầy và xác nhận điều kiện đổi trả.";
   }
   if (normalized.includes("thực đơn") || normalized.includes("biển báo") || normalized.includes("dịch")) {
-    return "Bạn có thể tải ảnh thực đơn/biển báo lên. Bản demo này sẽ mô phỏng kết quả dịch: món chính, nguyên liệu, mức cay, giá và câu nên hỏi bằng tiếng Trung.";
+    return "Bạn có thể tải ảnh thực đơn hoặc biển báo lên. C-TourGuide sẽ hỗ trợ nhận diện nội dung chính, dịch sang tiếng Việt, giải thích mức cay, giá, nguyên liệu và gợi ý câu nên hỏi bằng tiếng Trung.";
   }
   if (normalized.includes("lịch trình")) {
     return "Lịch trình gợi ý: sáng đi chợ Bạch Mã, trưa ăn gần ga Guangzhou Railway, chiều qua Sha He để khảo giá, tối tổng hợp mẫu và gửi kho. Nên đặt guide tối thiểu nửa ngày nếu đây là lần đầu đi.";
   }
-  return "Mình có thể hỗ trợ dịch Việt - Trung, gợi ý lịch trình, giải thích cách đi metro, cảnh báo rủi ro và chuẩn bị checklist trước khi đi Trung Quốc. Đây là phản hồi mô phỏng frontend.";
+  return "Mình có thể hỗ trợ dịch Việt - Trung, gợi ý lịch trình, giải thích cách đi metro, cảnh báo rủi ro và chuẩn bị checklist trước khi đi Trung Quốc.";
 }
 
 export function AIAssistantPage() {
@@ -74,7 +74,7 @@ export function AIAssistantPage() {
       <main className="mx-auto grid w-full max-w-7xl flex-1 gap-6 px-4 py-8 md:grid-cols-[320px_1fr] md:px-8">
         <aside className="h-fit rounded-3xl bg-[#f8f3f2] p-5">
           <h1 className="text-2xl font-bold">Trợ lý AI</h1>
-          <p className="mt-2 text-sm leading-6 text-[#5b5f61]">Mock assistant cho các tình huống người Việt thường gặp khi đi Trung Quốc.</p>
+          <p className="mt-2 text-sm leading-6 text-[#5b5f61]">Trợ lý thông minh cho các tình huống người Việt thường gặp khi đi Trung Quốc.</p>
           <div className="mt-5 flex flex-col gap-2">
             {suggestions.map((item) => (
               <button key={item} onClick={() => submit(item)} className="rounded-xl bg-white px-4 py-3 text-left text-sm font-semibold shadow-sm hover:bg-[#fff1ef]">
@@ -89,8 +89,8 @@ export function AIAssistantPage() {
 
         <section className="flex min-h-[680px] flex-col rounded-3xl border border-[#ece2e0] bg-white shadow-sm">
           <div className="border-b border-[#ece2e0] p-5">
-            <h2 className="text-xl font-bold">Hội thoại demo</h2>
-            <p className="mt-1 text-sm text-[#5b5f61]">Có hỗ trợ text, ảnh/camera/voice ở mức mô phỏng giao diện.</p>
+            <h2 className="text-xl font-bold">Hội thoại</h2>
+            <p className="mt-1 text-sm text-[#5b5f61]">Hỗ trợ câu hỏi văn bản, hình ảnh, camera và giọng nói trong hành trình.</p>
           </div>
           <div className="flex-1 space-y-4 overflow-y-auto p-5">
             {messages.map((message) => (
@@ -126,7 +126,7 @@ export function AIAssistantPage() {
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 md:flex-row md:items-center md:justify-between md:px-8">
           <div>
             <div className="text-xl font-bold text-[#b7131a]">C-TourGuide</div>
-            <p className="mt-1 text-sm text-[#5b5f61]">Trợ lý AI demo hỗ trợ khách Việt tại Trung Quốc.</p>
+            <p className="mt-1 text-sm text-[#5b5f61]">Trợ lý AI hỗ trợ khách Việt tại Trung Quốc.</p>
           </div>
           <div className="flex flex-wrap gap-4 text-sm text-[#5b5f61]">
             <Link to="/guides">Tìm guide</Link>

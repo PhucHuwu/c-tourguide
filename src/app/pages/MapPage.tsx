@@ -101,7 +101,7 @@ export function MapPage() {
       <main className="mx-auto grid w-full max-w-7xl flex-1 gap-6 px-4 py-8 md:grid-cols-[340px_1fr_340px] md:px-8">
         <aside className="rounded-3xl bg-[#f8f3f2] p-5">
           <h1 className="text-2xl font-bold">Bản đồ Trung Quốc</h1>
-          <p className="mt-2 text-sm leading-6 text-[#5b5f61]">Mock map dành cho khách Việt: chợ, metro, ATM, bệnh viện và điểm tiện ích.</p>
+          <p className="mt-2 text-sm leading-6 text-[#5b5f61]">Bản đồ dành cho khách Việt: chợ, metro, ATM, bệnh viện và điểm tiện ích.</p>
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
@@ -137,7 +137,7 @@ export function MapPage() {
         </aside>
 
         <section className="relative min-h-[560px] overflow-hidden rounded-3xl border border-[#ece2e0] bg-[#e8e8ec] shadow-sm">
-          <img src={mapPlaceholder} alt="Bản đồ mock Quảng Châu" className="h-full min-h-[560px] w-full object-cover" />
+          <img src={mapPlaceholder} alt="Bản đồ Quảng Châu" className="h-full min-h-[560px] w-full object-cover" />
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full rounded-full bg-[#b7131a] px-4 py-3 font-bold text-white shadow-xl">
             {selectedPlace.name}
           </div>
@@ -157,7 +157,7 @@ export function MapPage() {
             <div className="rounded-2xl bg-[#f8f3f2] p-4"><b>Lưu ý</b><p className="mt-1 leading-6 text-[#5b403d]">{selectedPlace.note}</p></div>
           </div>
           <div className="mt-5">
-            <h3 className="font-bold">Chỉ đường mock</h3>
+            <h3 className="font-bold">Chỉ đường</h3>
             <div className="mt-3 grid grid-cols-3 gap-2">
               {[
                 ["metro", "Metro"],
@@ -181,7 +181,7 @@ export function MapPage() {
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 md:flex-row md:items-center md:justify-between md:px-8">
           <div>
             <div className="text-xl font-bold text-[#b7131a]">C-TourGuide</div>
-            <p className="mt-1 text-sm text-[#5b5f61]">Bản đồ mock hỗ trợ di chuyển, tìm chợ và tiện ích tại Trung Quốc.</p>
+            <p className="mt-1 text-sm text-[#5b5f61]">Bản đồ hỗ trợ di chuyển, tìm chợ và tiện ích tại Trung Quốc.</p>
           </div>
           <div className="flex flex-wrap gap-4 text-sm text-[#5b5f61]">
             <Link to="/guides">Tìm guide</Link>
